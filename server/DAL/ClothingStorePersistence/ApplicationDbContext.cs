@@ -1,7 +1,10 @@
-﻿namespace ClothingStorePersistence;
+﻿using Microsoft.EntityFrameworkCore;
+using ClothDomain;
+
+namespace ClothingStorePersistence;
 
 public class ApplicationDbContext : DbContext
 {
-    DbSet<Cloth> Clothes { get; set; }
+    public DbSet<Cloth> Clothes { get; set; }
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {}
 }
