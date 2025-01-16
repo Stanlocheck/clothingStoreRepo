@@ -8,4 +8,6 @@ public class Cloth
     public string Type { get; set; }
     public string Material { get; set; }
     public string Manufacturer { get; set; }
+    public string Season { get; set; }
+    public int Size { get; set; }
 }
