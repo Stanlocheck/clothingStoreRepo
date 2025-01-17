@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Core\ClothDomain\ClothDomain.csproj" />
     <ProjectReference Include="C:\Users\Aleksey\Documents\backProjects\clothingStoreAPI\server\DAL\ClothingStorePersistence\ClothingStorePersistence.csproj" />
   </ItemGroup>
 
