@@ -16,6 +16,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Core\ClothDomain\ClothDomain.csproj" />
+    <ProjectReference Include="..\ClothesInterfacesDAL\ClothesInterfacesDAL.csproj" />
   </ItemGroup>
 
 </Project>
