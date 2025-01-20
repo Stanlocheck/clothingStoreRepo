@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using ClothingStorePersistence;
 using Microsoft.OpenApi.Models;
+using ClothDTOs;
 
 var builder = WebApplication.CreateBuilder(args);
 

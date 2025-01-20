@@ -7,6 +7,8 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="12.0.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="12.0.1" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.1">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -20,6 +22,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\BLL\ClothDTOs\ClothDTOs.csproj" />
     <ProjectReference Include="..\..\Core\ClothDomain\ClothDomain.csproj" />
     <ProjectReference Include="C:\Users\Aleksey\Documents\backProjects\clothingStoreAPI\server\DAL\ClothingStorePersistence\ClothingStorePersistence.csproj" />
   </ItemGroup>

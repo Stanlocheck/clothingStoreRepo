@@ -17,9 +17,8 @@ namespace clothingStoreWebAPI.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Cloth>>> GetCloth(){
-            await _context.Clothes.ToListAsync();
-            return Ok();
+        public async Task<ActionResult<IEnumerable<Cloth>>> GetAll(){
+            return await _context.Clothes.ToListAsync();
         }
 
         [HttpPost]
@@ -28,5 +27,6 @@ namespace clothingStoreWebAPI.Controllers
             await _context.SaveChangesAsync();
             return Ok();
         }
+
     }
 }
