@@ -23,7 +23,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\BLL\ClothDTOs\ClothDTOs.csproj" />
+    <ProjectReference Include="..\..\BLL\ClothesInterfacesBLL\ClothesInterfacesBLL.csproj" />
+    <ProjectReference Include="..\..\BLL\ClothingStoreApplication\ClothingStoreApplication.csproj" />
     <ProjectReference Include="..\..\Core\ClothDomain\ClothDomain.csproj" />
+    <ProjectReference Include="..\..\DAL\ClothesInterfacesDAL\ClothesInterfacesDAL.csproj" />
     <ProjectReference Include="C:\Users\Aleksey\Documents\backProjects\clothingStoreAPI\server\DAL\ClothingStorePersistence\ClothingStorePersistence.csproj" />
   </ItemGroup>
 

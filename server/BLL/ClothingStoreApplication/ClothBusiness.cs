@@ -54,10 +54,10 @@ public class ClothBusiness : IClothBLL
         }
      }
 
-     public async Task UpdateCloth(ClothAddDTO cloth){
+     public async Task UpdateCloth(ClothAddDTO cloth, Guid id){
         try{
             var clothUpdateDTO = _clothAddDTO.Map<ClothAddDTO, Cloth>(cloth);
-            await _clothDAO.AddCloth(clothUpdateDTO);
+            await _clothDAO.UpdateCloth(clothUpdateDTO, id);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);
