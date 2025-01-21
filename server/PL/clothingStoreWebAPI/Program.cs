@@ -2,6 +2,9 @@ using Microsoft.EntityFrameworkCore;
 using ClothingStorePersistence;
 using Microsoft.OpenApi.Models;
 using ClothDTOs;
+using ClothesInterfacesBLL;
+using ClothesInterfacesDAL;
+using ClothingStoreApplication;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -31,6 +34,9 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
+builder.Services.AddScoped<IClothesDAO, SqlDAO>();
+builder.Services.AddScoped<IClothBLL, ClothBusiness>();
 
 var app = builder.Build();
 
