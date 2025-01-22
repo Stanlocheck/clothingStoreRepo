@@ -1,16 +1,18 @@
-using Microsoft.AspNetCore.Mvc;
 using ClothesInterfacesBLL;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using ClothDTOs;
 
-namespace clothingStoreWebAPI.Controllers
+namespace clothingStoreWebAPI.AuthControllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class HomeController : ControllerBase
+    public class AuthAdmin : ControllerBase
     {
         private IClothBLL _clothBLL;
 
-        public HomeController(IClothBLL clothBLL) {
+        public AuthAdmin(IClothBLL clothBLL) {
             _clothBLL = clothBLL;
         }
 
