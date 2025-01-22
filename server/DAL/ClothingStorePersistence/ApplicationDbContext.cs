@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace ClothingStorePersistence;
 
-public class ApplicationDbContext : IdentityDbContext<Buyer>
+public class ApplicationDbContext : DbContext
 {
     public DbSet<Cloth> Clothes { get; set; } = null!;
     public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) {
