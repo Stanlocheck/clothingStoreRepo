@@ -1,8 +1,9 @@
 using System;
+using Microsoft.AspNetCore.Identity;
 
 namespace ClothDomain;
 
-public class Admin
+public class Admin : IdentityUser
 {
     public Guid Id { get; set; }
     public string FirstName { get; set; }
