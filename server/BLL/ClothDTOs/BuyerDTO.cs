@@ -1,6 +1,6 @@
-namespace ClothDomain;
+namespace ClothDTOs;
 
-public class Buyer
+public class BuyerDTO
 {
     public Guid Id { get; set; }
     public string FirstName { get; set; }

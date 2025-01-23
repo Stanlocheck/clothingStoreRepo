@@ -41,6 +41,8 @@ public class SqlDAO : IClothesDAO
         cloth.Material = clothUpdt.Material;
         cloth.Season = clothUpdt.Season;
         cloth.Type = clothUpdt.Type;     
+
+        await _context.SaveChangesAsync();
     }
     public async Task DeleteCloth(Guid id){
         var cloth = await _context.Clothes.FindAsync(id);
