@@ -1,10 +1,12 @@
 using ClothDTOs;
 using ClothesInterfacesBLL;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace clothingStoreWebAPI.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class BuyerController : ControllerBase

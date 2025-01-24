@@ -21,7 +21,11 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-    .AddCookie(options => options.LoginPath = "/login");
+    .AddCookie(options => {
+        options.LoginPath = "/api/auth/login";
+        options.LogoutPath = "/api/auth/logout";
+        options.AccessDeniedPath = "/api/auth/access-denied";
+    });
 builder.Services.AddAuthorization();
 
 builder.Services.AddSwaggerGen(c =>
@@ -50,6 +54,9 @@ builder.Services.AddScoped<IClothBLL, ClothBusiness>();
 
 builder.Services.AddScoped<IBuyersDAO, SqlBuyersDAO>();
 builder.Services.AddScoped<IBuyersBLL, BuyerBusiness>();
+
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
