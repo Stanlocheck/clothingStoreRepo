@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -26,7 +27,10 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.LogoutPath = "/api/auth/logout";
         options.AccessDeniedPath = "/api/auth/access-denied";
     });
-builder.Services.AddAuthorization();
+builder.Services.AddAuthorization(options => {
+    options.AddPolicy("AdminOnly", policy => policy.RequireClaim(ClaimTypes.Role, "Admin"));
+    options.AddPolicy("BuyerOnly", policy => policy.RequireClaim(ClaimTypes.Role, "Buyer"));
+});
 
 builder.Services.AddSwaggerGen(c =>
 {
@@ -59,6 +63,7 @@ builder.Services.AddScoped<IAdminsDAO, SqlAdminsDAO>();
 builder.Services.AddScoped<IAdminsBLL, AdminBusiness>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAuthAdminService, AuthAdminService>();
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();

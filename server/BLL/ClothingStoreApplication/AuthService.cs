@@ -47,7 +47,7 @@ public class AuthService : IAuthService
             PhoneNumber = buyerInfo.PhoneNumber,
             City = buyerInfo.City,
             StreetAddress = buyerInfo.StreetAddress,
-            ApartmentNumber = buyerInfo.ApartmentNumber
+            ApartmentNumber = buyerInfo.ApartmentNumber,
         };
         var buyerAddDTO = _buyerAddDTO.Map<BuyerAddDTO, Buyer>(buyer);
         await _buyersDAO.AddBuyer(buyerAddDTO);
@@ -63,7 +63,8 @@ public class AuthService : IAuthService
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Email, buyer.Email),
-            new Claim(ClaimTypes.NameIdentifier, buyer.Id.ToString())
+            new Claim(ClaimTypes.NameIdentifier, buyer.Id.ToString()),
+            new Claim(ClaimTypes.Role, buyer.Role)
         };
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         var authProperties = new AuthenticationProperties();

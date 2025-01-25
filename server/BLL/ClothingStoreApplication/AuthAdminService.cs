@@ -59,7 +59,8 @@ public class AuthAdminService : IAuthAdminService
         var claims = new List<Claim>
         {
             new Claim(ClaimTypes.Email, admin.Email),
-            new Claim(ClaimTypes.NameIdentifier, admin.Id.ToString())
+            new Claim(ClaimTypes.NameIdentifier, admin.Id.ToString()),
+            new Claim(ClaimTypes.Role, admin.Role)
         };
         var claimsIdentity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         var authProperties = new AuthenticationProperties();

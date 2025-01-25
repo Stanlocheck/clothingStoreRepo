@@ -1,26 +1,25 @@
-using ClothesInterfacesBLL;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using ClothesInterfacesBLL;
 
 namespace clothingStoreWebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class AuthController : ControllerBase
+    public class AuthAdminController : ControllerBase
     {
-        private readonly IAuthService _authService;
+        private readonly IAuthAdminService _authAdminService;
 
-        public AuthController(IAuthService authService){
-            _authService = authService;
+        public AuthAdminController(IAuthAdminService authAdminService){
+            _authAdminService = authAdminService;
         }
 
-        [HttpPost("register")]
-        public async Task<ActionResult> Register([FromBody] RegisterModel request)
+        [HttpPost("registerAdmin")]
+        public async Task<ActionResult> Register([FromBody] RegisterAdminModel request)
         {
             try
             {
-                await _authService.Register(request.Email, request.Password, request.BuyerInfo);
+                await _authAdminService.Register(request.Email, request.Password, request.AdminInfo);
                 return Ok("User registered successfully.");
             }
             catch (Exception ex)
@@ -28,12 +27,12 @@ namespace clothingStoreWebAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-                [HttpPost("login")]
+        [HttpPost("loginAdmin")]
         public async Task<ActionResult> Login([FromBody] LoginModel request)
         {
             try
             {
-                await _authService.Login(request.Email, request.Password);
+                await _authAdminService.Login(request.Email, request.Password);
                 return Ok("User logged in successfully.");
             }
             catch (Exception ex)
@@ -42,12 +41,12 @@ namespace clothingStoreWebAPI.Controllers
             }
         }
 
-        [HttpPost("logout")]
+        [HttpPost("logoutAdmin")]
         public async Task<ActionResult> Logout()
         {
             try
             {
-                await _authService.Logout();
+                await _authAdminService.Logout();
                 return Ok("User logged out successfully.");
             }
             catch (Exception ex)
