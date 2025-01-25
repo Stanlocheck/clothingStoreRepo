@@ -55,6 +55,9 @@ builder.Services.AddScoped<IClothBLL, ClothBusiness>();
 builder.Services.AddScoped<IBuyersDAO, SqlBuyersDAO>();
 builder.Services.AddScoped<IBuyersBLL, BuyerBusiness>();
 
+builder.Services.AddScoped<IAdminsDAO, SqlAdminsDAO>();
+builder.Services.AddScoped<IAdminsBLL, AdminBusiness>();
+
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddHttpContextAccessor();
 

@@ -19,7 +19,7 @@ public class SqlBuyersDAO : IBuyersDAO
     public async Task<Buyer> GetById(Guid id){
         var buyer = _context.Buyers.Where(_buyer => _buyer.Id == id);
         if(buyer == null){
-            throw new Exception("Object not found.");
+            throw new Exception("User not found.");
         }
 
         return await buyer.FirstOrDefaultAsync();
@@ -31,7 +31,7 @@ public class SqlBuyersDAO : IBuyersDAO
     public async Task UpdateBuyer(Buyer buyerUpdt, Guid id){
         var buyer = await _context.Buyers.FindAsync(id);  
         if(buyer == null){
-            throw new Exception("Object not found.");
+            throw new Exception("User not found.");
         } 
 
         buyer.FirstName = buyerUpdt.FirstName;
@@ -49,7 +49,7 @@ public class SqlBuyersDAO : IBuyersDAO
     public async Task DeleteBuyer(Guid id){
         var buyer = await _context.Buyers.FindAsync(id);
         if(buyer == null){
-            throw new Exception("Object not found.");
+            throw new Exception("User not found.");
         }
 
         _context.Buyers.Remove(buyer);
