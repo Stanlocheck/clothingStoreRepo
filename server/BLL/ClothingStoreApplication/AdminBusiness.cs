@@ -21,29 +21,7 @@ public class AdminBusiness : IAdminsBLL
 
         var _adminAddDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Admin, AdminAddDTO>().ReverseMap());
         _adminAddDTO = new Mapper(_adminAddDtoMapping);
-    } 
-
-    public async Task<List<AdminDTO>> GetAll(){
-        try {
-            var admin = await _adminsDAO.GetAll();
-            var adminDTO = _adminDTO.Map<List<Admin>, List<AdminDTO>>(admin);
-            return adminDTO;
-        }
-        catch(Exception ex){
-            throw new Exception(ex.Message);
-        }
-     }
-
-     public async Task<AdminDTO> GetById(Guid id){
-        try{
-            var admin = await _adminsDAO.GetById(id);
-            var adminDTO = _adminDTO.Map<Admin, AdminDTO>(admin);
-            return adminDTO;
-        }
-        catch(Exception ex){
-            throw new Exception(ex.Message);
-        }
-     }
+    }
 
      public async Task AddAdmin(AdminAddDTO admin){
         try{

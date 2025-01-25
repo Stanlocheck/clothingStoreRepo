@@ -51,6 +51,7 @@ namespace clothingStoreWebAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "AdminOnly")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteBuyer(Guid id){
             try{
