@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ClothesInterfacesBLL;
 using ClothDTOs;
@@ -8,19 +9,19 @@ namespace clothingStoreWebAPI.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class HomeController : ControllerBase
+    public class AdminController : ControllerBase
     {
-        private IClothBLL _clothBLL;
+        private IAdminsBLL _adminBLL;
 
-        public HomeController(IClothBLL clothBLL) {
-            _clothBLL = clothBLL;
+        public AdminController(IAdminsBLL adminsBLL){
+            _adminBLL = adminsBLL;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<ClothDTO>>> GetAll(){
+        public async Task<ActionResult<List<AdminDTO>>> GetAll(){
             try{
-                var cloth = await _clothBLL.GetAll();
-                return Ok(cloth);
+                var admin = await _adminBLL.GetAll();
+                return Ok(admin);
             }
             catch(Exception ex){
                 return BadRequest(ex.Message);
@@ -28,10 +29,10 @@ namespace clothingStoreWebAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ClothDTO>> GetById(Guid id){
+        public async Task<ActionResult<AdminDTO>> GetById(Guid id){
             try{
-                var cloth = await _clothBLL.GetById(id);
-                return Ok(cloth);
+                var admin = await _adminBLL.GetById(id);
+                return Ok(admin);
             }
             catch(Exception ex){
                 return BadRequest(ex.Message);
@@ -39,10 +40,10 @@ namespace clothingStoreWebAPI.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> AddCloth(ClothAddDTO addCloth){
+        public async Task<ActionResult> AddAdmin(AdminAddDTO addAdmin){
             try{
-                await _clothBLL.AddCloth(addCloth);
-                return Ok(addCloth);
+                await _adminBLL.AddAdmin(addAdmin);
+                return Ok(addAdmin);
             }
             catch(Exception ex){
                 return BadRequest(ex.Message);
@@ -50,10 +51,10 @@ namespace clothingStoreWebAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateCloth(ClothAddDTO updtCloth, Guid id){
+        public async Task<ActionResult> UpdateAdmin(AdminAddDTO updtAdmin, Guid id){
             try{
-                await _clothBLL.UpdateCloth(updtCloth, id);
-                return Ok(updtCloth);
+                await _adminBLL.UpdateAdmin(updtAdmin, id);
+                return Ok(updtAdmin);
             }
             catch(Exception ex){
                 return BadRequest(ex.Message);
@@ -61,9 +62,9 @@ namespace clothingStoreWebAPI.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteCloth(Guid id){
+        public async Task<ActionResult> DeleteAdmin(Guid id){
             try{
-                await _clothBLL.DeleteCloth(id);
+                await _adminBLL.DeleteAdmin(id);
                 return Ok();
             }
             catch(Exception ex){
