@@ -6,7 +6,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace clothingStoreWebAPI.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class BuyerController : ControllerBase
@@ -17,6 +16,7 @@ namespace clothingStoreWebAPI.Controllers
             _buyerBLL = buyersBLL;
         }
 
+        [Authorize(Policy = "AdminOnly")]
         [HttpGet]
         public async Task<ActionResult<List<BuyerDTO>>> GetAll(){
             try{
@@ -28,22 +28,12 @@ namespace clothingStoreWebAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "AdminOnly")]
         [HttpGet("{id}")]
         public async Task<ActionResult<BuyerDTO>> GetById(Guid id){
             try{
                 var buyer = await _buyerBLL.GetById(id);
                 return Ok(buyer);
-            }
-            catch(Exception ex){
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPost]
-        public async Task<ActionResult> AddBuyer(BuyerAddDTO addBuyer){
-            try{
-                await _buyerBLL.AddBuyer(addBuyer);
-                return Ok(addBuyer);
             }
             catch(Exception ex){
                 return BadRequest(ex.Message);

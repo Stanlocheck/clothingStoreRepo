@@ -5,7 +5,6 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace clothingStoreWebAPI.Controllers
 {
-    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class HomeController : ControllerBase
@@ -38,6 +37,7 @@ namespace clothingStoreWebAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         public async Task<ActionResult> AddCloth(ClothAddDTO addCloth){
             try{
@@ -49,6 +49,7 @@ namespace clothingStoreWebAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "AdminOnly")]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCloth(ClothAddDTO updtCloth, Guid id){
             try{
@@ -60,6 +61,7 @@ namespace clothingStoreWebAPI.Controllers
             }
         }
 
+        [Authorize(Policy = "AdminOnly")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCloth(Guid id){
             try{
