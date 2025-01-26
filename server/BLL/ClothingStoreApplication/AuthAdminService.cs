@@ -10,6 +10,7 @@ using ClothDTOs;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
+using System.Text.RegularExpressions;
 
 namespace ClothingStoreApplication;
 
@@ -34,15 +35,19 @@ public class AuthAdminService : IAuthAdminService
     }
 
     public async Task Register(string email, string password, AdminAddDTO adminInfo){
-        if(await _context.Admins.AnyAsync(a => a.Email == email)){
+        if(await _context.Admins.AnyAsync(a => a.Email == email) || await _context.Buyers.AnyAsync(b => b.Email == email)){
             throw new Exception("User with this email already exists.");
+        }
+
+        if(!IsPasswordValid(password)){
+            throw new Exception("Password must contain 8 characters, at least one uppercase letter and one digit.");
         }
 
         var admin = new AdminAddDTO {
             FirstName = adminInfo.FirstName,
             LastName = adminInfo.LastName,
             Email = email,
-            Password = BCrypt.Net.BCrypt.HashPassword(password), // Хэширование пароля
+            Password = BCrypt.Net.BCrypt.HashPassword(password),
             PhoneNumber = adminInfo.PhoneNumber,
         };
         var adminAddDTO = _adminAddDTO.Map<AdminAddDTO, Admin>(admin);
@@ -73,5 +78,9 @@ public class AuthAdminService : IAuthAdminService
 
     public async Task Logout(){
         await _httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+    }
+    public bool IsPasswordValid(string password){
+        var regex = new Regex(@"^(?=.*[A-Z])(?=.*\d).{8,}$");
+        return regex.IsMatch(password);
     }
 }
