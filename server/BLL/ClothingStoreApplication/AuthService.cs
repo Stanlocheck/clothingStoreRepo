@@ -9,6 +9,7 @@ using AutoMapper;
 using ClothDomain;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using System.Text.RegularExpressions;
 
 namespace ClothingStoreApplication;
 
@@ -33,15 +34,19 @@ public class AuthService : IAuthService
     }
 
     public async Task Register(string email, string password, BuyerAddDTO buyerInfo){
-        if(await _context.Buyers.AnyAsync(b => b.Email == email)){
+        if(await _context.Buyers.AnyAsync(b => b.Email == email) || await _context.Admins.AnyAsync(a => a.Email == email)){
             throw new Exception("User with this email already exists.");
+        }
+
+        if(!IsPasswordValid(password)){
+            throw new Exception("Password must contain 8 characters, at least one uppercase letter and one digit.");
         }
 
         var buyer = new BuyerAddDTO {
             FirstName = buyerInfo.FirstName,
             LastName = buyerInfo.LastName,
             Email = email,
-            Password = BCrypt.Net.BCrypt.HashPassword(password), // Хэширование пароля
+            Password = BCrypt.Net.BCrypt.HashPassword(password),
             DateOfBirth = buyerInfo.DateOfBirth,
             Gender = buyerInfo.Gender,
             PhoneNumber = buyerInfo.PhoneNumber,
@@ -77,5 +82,10 @@ public class AuthService : IAuthService
 
     public async Task Logout(){
         await _httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+    }
+
+    public bool IsPasswordValid(string password){
+        var regex = new Regex(@"^(?=.*[A-Z])(?=.*\d).{8,}$");
+        return regex.IsMatch(password);
     }
 }
