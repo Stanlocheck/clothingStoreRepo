@@ -47,8 +47,12 @@ public class BuyerBusiness : IBuyersBLL
 
      public async Task AddBuyer(BuyerAddDTO buyer){
         try{
+            Enum.Parse<Gender>(buyer.Sex);
             var buyerAddDTO = _buyerAddDTO.Map<BuyerAddDTO, Buyer>(buyer);
             await _buyersDAO.AddBuyer(buyerAddDTO);
+        }
+        catch(ArgumentException){
+            throw new Exception("Неверный пол.");
         }
         catch(Exception ex){
             throw new Exception(ex.Message);
@@ -57,8 +61,12 @@ public class BuyerBusiness : IBuyersBLL
 
      public async Task UpdateBuyer(BuyerAddDTO buyer, Guid id){
         try{
+            Enum.Parse<Gender>(buyer.Sex);
             var buyerUpdateDTO = _buyerAddDTO.Map<BuyerAddDTO, Buyer>(buyer);
             await _buyersDAO.UpdateBuyer(buyerUpdateDTO, id);
+        }
+        catch(ArgumentException){
+            throw new Exception("Неверный пол.");
         }
         catch(Exception ex){
             throw new Exception(ex.Message);

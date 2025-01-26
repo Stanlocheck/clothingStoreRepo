@@ -26,15 +26,5 @@ namespace clothingStoreWebAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteAdmin(Guid id){
-            try{
-                await _adminBLL.DeleteAdmin(id);
-                return Ok();
-            }
-            catch(Exception ex){
-                return BadRequest(ex.Message);
-            }
-        }
     }
 }

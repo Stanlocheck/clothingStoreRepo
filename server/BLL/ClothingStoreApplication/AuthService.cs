@@ -33,40 +33,51 @@ public class AuthService : IAuthService
         _buyerAddDTO = new Mapper(_buyerAddDtoMapping);
     }
 
-    public async Task Register(string email, string password, BuyerAddDTO buyerInfo){
-        if(await _context.Buyers.AnyAsync(b => b.Email == email) || await _context.Admins.AnyAsync(a => a.Email == email)){
-            throw new Exception("User with this email already exists.");
+    public async Task Register(BuyerAddDTO buyerInfo){
+        if(await _context.Buyers.AnyAsync(b => b.Email == buyerInfo.Email) || await _context.Admins.AnyAsync(a => a.Email == buyerInfo.Email)){
+            throw new Exception("Пользователь с таким Email уже существует.");
         }
 
-        if(!IsEmailValid(email)){
-            throw new Exception("Invalid email format.");
+        if(!IsEmailValid(buyerInfo.Email)){
+            throw new Exception("Неверный формат Email.");
         }
 
-        if(!IsPasswordValid(password)){
-            throw new Exception("Password must contain 8 characters, at least one uppercase letter and one digit.");
+        if(!IsPasswordValid(buyerInfo.Password)){
+            throw new Exception("Неверный формат пароля. Пароль должен содержать минимум 8 символов, 1 заглавную букву и 1 цифру.");
         }
 
         var buyer = new BuyerAddDTO {
             FirstName = buyerInfo.FirstName,
             LastName = buyerInfo.LastName,
-            Email = email,
-            Password = BCrypt.Net.BCrypt.HashPassword(password),
+            Email = buyerInfo.Email,
+            Password = BCrypt.Net.BCrypt.HashPassword(buyerInfo.Password),
             DateOfBirth = buyerInfo.DateOfBirth,
-            Gender = buyerInfo.Gender,
+            Sex = buyerInfo.Sex.ToUpper(),
             PhoneNumber = buyerInfo.PhoneNumber,
             City = buyerInfo.City,
             StreetAddress = buyerInfo.StreetAddress,
             ApartmentNumber = buyerInfo.ApartmentNumber,
         };
-        var buyerAddDTO = _buyerAddDTO.Map<BuyerAddDTO, Buyer>(buyer);
-        await _buyersDAO.AddBuyer(buyerAddDTO);
+
+        try{
+            Enum.Parse<Gender>(buyer.Sex);
+            var buyerAddDTO = _buyerAddDTO.Map<BuyerAddDTO, Buyer>(buyer);
+            await _buyersDAO.AddBuyer(buyerAddDTO);
+        }
+        catch(ArgumentException){
+            throw new Exception("Неверный пол.");
+        }
+        catch(Exception ex){
+            throw new Exception(ex.Message);
+        }
+
     }
 
     public async Task Login(string email, string password){
         var buyer = await _context.Buyers.FirstOrDefaultAsync(b => b.Email == email);
         if (buyer == null || !BCrypt.Net.BCrypt.Verify(password, buyer.Password))
         {
-            throw new Exception("Invalid email or password.");
+            throw new Exception("Неверный Email или пароль.");
         }
 
         var claims = new List<Claim>
