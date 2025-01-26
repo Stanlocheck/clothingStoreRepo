@@ -10,4 +10,5 @@ public interface IAuthService
     Task Login(string email, string password);
     Task Logout();
     public bool IsPasswordValid(string password);
+    public bool IsEmailValid(string email);
 }

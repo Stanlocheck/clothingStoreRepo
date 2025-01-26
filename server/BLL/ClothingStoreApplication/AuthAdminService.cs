@@ -79,8 +79,13 @@ public class AuthAdminService : IAuthAdminService
     public async Task Logout(){
         await _httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     }
+
     public bool IsPasswordValid(string password){
         var regex = new Regex(@"^(?=.*[A-Z])(?=.*\d).{8,}$");
         return regex.IsMatch(password);
+    }
+    public bool IsEmailValid(string email){
+        var regex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+        return regex.IsMatch(email);
     }
 }

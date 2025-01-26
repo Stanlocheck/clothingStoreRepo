@@ -38,6 +38,10 @@ public class AuthService : IAuthService
             throw new Exception("User with this email already exists.");
         }
 
+        if(!IsEmailValid(email)){
+            throw new Exception("Invalid email format.");
+        }
+
         if(!IsPasswordValid(password)){
             throw new Exception("Password must contain 8 characters, at least one uppercase letter and one digit.");
         }
@@ -87,5 +91,9 @@ public class AuthService : IAuthService
     public bool IsPasswordValid(string password){
         var regex = new Regex(@"^(?=.*[A-Z])(?=.*\d).{8,}$");
         return regex.IsMatch(password);
+    }
+    public bool IsEmailValid(string email){
+        var regex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
+        return regex.IsMatch(email);
     }
 }
