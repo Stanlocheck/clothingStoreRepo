@@ -50,17 +50,5 @@ namespace clothingStoreWebAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-        [Authorize(Policy = "AdminOnly")]
-        [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteBuyer(Guid id){
-            try{
-                await _buyerBLL.DeleteBuyer(id);
-                return Ok();
-            }
-            catch(Exception ex){
-                return BadRequest(ex.Message);
-            }
-        }
     }
 }

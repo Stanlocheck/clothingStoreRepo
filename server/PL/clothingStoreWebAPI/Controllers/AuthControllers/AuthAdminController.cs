@@ -19,8 +19,8 @@ namespace clothingStoreWebAPI.Controllers
         {
             try
             {
-                await _authAdminService.Register(request.Email, request.Password, request.AdminInfo);
-                return Ok("User registered successfully.");
+                await _authAdminService.Register(request.AdminInfo);
+                return Ok("Регистрация пользователя успешна.");
             }
             catch (Exception ex)
             {
@@ -33,7 +33,7 @@ namespace clothingStoreWebAPI.Controllers
             try
             {
                 await _authAdminService.Login(request.Email, request.Password);
-                return Ok("User logged in successfully.");
+                return Ok("Вход пользователя успешен.");
             }
             catch (Exception ex)
             {
@@ -47,7 +47,7 @@ namespace clothingStoreWebAPI.Controllers
             try
             {
                 await _authAdminService.Logout();
-                return Ok("User logged out successfully.");
+                return Ok("Выход пользователя успешен.");
             }
             catch (Exception ex)
             {

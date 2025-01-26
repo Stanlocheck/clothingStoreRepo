@@ -34,20 +34,24 @@ public class AuthAdminService : IAuthAdminService
         _adminAddDTO = new Mapper(_adminAddDtoMapping);
     }
 
-    public async Task Register(string email, string password, AdminAddDTO adminInfo){
-        if(await _context.Admins.AnyAsync(a => a.Email == email) || await _context.Buyers.AnyAsync(b => b.Email == email)){
-            throw new Exception("User with this email already exists.");
+    public async Task Register(AdminAddDTO adminInfo){
+        if(await _context.Admins.AnyAsync(a => a.Email == adminInfo.Email) || await _context.Buyers.AnyAsync(b => b.Email == adminInfo.Email)){
+            throw new Exception("Пользователь с таким Email уже существует.");
         }
 
-        if(!IsPasswordValid(password)){
-            throw new Exception("Password must contain 8 characters, at least one uppercase letter and one digit.");
+        if(!IsEmailValid(adminInfo.Email)){
+            throw new Exception("Неверный формат Email.");
+        }
+
+        if(!IsPasswordValid(adminInfo.Password)){
+            throw new Exception("Неверный формат пароля. Пароль должен содержать минимум 8 символов, 1 заглавную букву и 1 цифру.");
         }
 
         var admin = new AdminAddDTO {
             FirstName = adminInfo.FirstName,
             LastName = adminInfo.LastName,
-            Email = email,
-            Password = BCrypt.Net.BCrypt.HashPassword(password),
+            Email = adminInfo.Email,
+            Password = BCrypt.Net.BCrypt.HashPassword(adminInfo.Password),
             PhoneNumber = adminInfo.PhoneNumber,
         };
         var adminAddDTO = _adminAddDTO.Map<AdminAddDTO, Admin>(admin);
@@ -58,7 +62,7 @@ public class AuthAdminService : IAuthAdminService
         var admin = await _context.Admins.FirstOrDefaultAsync(a => a.Email == email);
         if (admin == null || !BCrypt.Net.BCrypt.Verify(password, admin.Password))
         {
-            throw new Exception("Invalid email or password.");
+            throw new Exception("Неверный Email или пароль.");
         }
 
         var claims = new List<Claim>

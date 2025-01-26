@@ -5,7 +5,7 @@ namespace ClothesInterfacesBLL;
 
 public interface IAuthAdminService
 {
-    Task Register(string email, string password, AdminAddDTO adminInfo);
+    Task Register(AdminAddDTO adminInfo);
     Task Login(string email, string password);
     Task Logout();  
     public bool IsPasswordValid(string password);
