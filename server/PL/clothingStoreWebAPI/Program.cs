@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -51,6 +52,9 @@ builder.Services.AddSwaggerGen(c =>
             Url = new Uri("https://example.com/license")
         }
     });
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
 });
 
 builder.Services.AddScoped<IClothesDAO, SqlDAO>();

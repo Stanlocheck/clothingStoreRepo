@@ -40,7 +40,8 @@ public class SqlDAO : IClothesDAO
         cloth.Brand = clothUpdt.Brand;
         cloth.Material = clothUpdt.Material;
         cloth.Season = clothUpdt.Season;
-        cloth.Type = clothUpdt.Type;     
+        cloth.Type = clothUpdt.Type;   
+        cloth.Sex = clothUpdt.Sex;  
 
         await _context.SaveChangesAsync();
     }

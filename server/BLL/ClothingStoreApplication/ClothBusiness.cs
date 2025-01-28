@@ -46,8 +46,12 @@ public class ClothBusiness : IClothBLL
 
      public async Task AddCloth(ClothAddDTO cloth){
         try{
+            Enum.Parse<Gender>(cloth.Sex);
             var clothAddDTO = _clothAddDTO.Map<ClothAddDTO, Cloth>(cloth);
             await _clothDAO.AddCloth(clothAddDTO);
+        }
+        catch(ArgumentException){
+            throw new Exception("Неверно указан пол.");
         }
         catch(Exception ex){
             throw new Exception(ex.Message);
@@ -56,8 +60,12 @@ public class ClothBusiness : IClothBLL
 
      public async Task UpdateCloth(ClothAddDTO cloth, Guid id){
         try{
+            Enum.Parse<Gender>(cloth.Sex);
             var clothUpdateDTO = _clothAddDTO.Map<ClothAddDTO, Cloth>(cloth);
             await _clothDAO.UpdateCloth(clothUpdateDTO, id);
+        }
+        catch(ArgumentException){
+            throw new Exception("Неверно указан пол.");
         }
         catch(Exception ex){
             throw new Exception(ex.Message);
