@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Authorization;
 
 namespace clothingStoreWebAPI.Controllers
 {
+    /// <summary>
+    /// Контроллер для работы с функциями продуктов.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class HomeController : ControllerBase
@@ -15,6 +18,11 @@ namespace clothingStoreWebAPI.Controllers
             _clothBLL = clothBLL;
         }
 
+
+        /// <summary>
+        /// Получает информацию о всех продуктах.
+        /// </summary>
+        /// <returns>Информация о продуктах.</returns>
         [HttpGet]
         public async Task<ActionResult<List<ClothDTO>>> GetAll(){
             try{
@@ -26,6 +34,12 @@ namespace clothingStoreWebAPI.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Получает информацию о продукте по его идентификатору.
+        /// </summary>
+        /// <param name="id">Идентификатор продукта.</param>
+        /// <returns>Информация о продукте.</returns>
         [HttpGet("{id}")]
         public async Task<ActionResult<ClothDTO>> GetById(Guid id){
             try{
@@ -37,6 +51,11 @@ namespace clothingStoreWebAPI.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Создает продукт.
+        /// </summary>
+        /// <returns>Информация о продукте.</returns>
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
         public async Task<ActionResult> AddCloth(ClothAddDTO addCloth){
@@ -49,6 +68,13 @@ namespace clothingStoreWebAPI.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Изменяет информацию о продукте по его идентификатору.
+        /// </summary>
+        /// <param name="id">Идентификатор продукта.</param>
+        /// <param name="updtCloth">Схема продукта.</param>
+        /// <returns>Информация о продукте.</returns>
         [Authorize(Policy = "AdminOnly")]
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCloth(ClothAddDTO updtCloth, Guid id){
@@ -61,6 +87,12 @@ namespace clothingStoreWebAPI.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Удаляет продукт по его идентификатору.
+        /// </summary>
+        /// <param name="id">Идентификатор продукта.</param>
+        /// <returns>Информация о продукте.</returns>
         [Authorize(Policy = "AdminOnly")]
         [HttpDelete("{id}")]
         public async Task<ActionResult> DeleteCloth(Guid id){

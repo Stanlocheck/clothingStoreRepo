@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace clothingStoreWebAPI.Controllers
 {
+    /// <summary>
+    /// Контроллер для работы с функциями покупателей.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class BuyerController : ControllerBase
@@ -16,6 +19,11 @@ namespace clothingStoreWebAPI.Controllers
             _buyerBLL = buyersBLL;
         }
 
+
+        /// <summary>
+        /// Получает информацию о всех пользователях.
+        /// </summary>
+        /// <returns>Информация о пользователях.</returns>
         [Authorize(Policy = "AdminOnly")]
         [HttpGet]
         public async Task<ActionResult<List<BuyerDTO>>> GetAll(){
@@ -28,6 +36,12 @@ namespace clothingStoreWebAPI.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Получает информацию о пользователе по его идентификатору.
+        /// </summary>
+        /// <param name="id">Идентификатор пользователя.</param>
+        /// <returns>Информация о пользователе.</returns>
         [Authorize(Policy = "AdminOnly")]
         [HttpGet("{id}")]
         public async Task<ActionResult<BuyerDTO>> GetById(Guid id){
@@ -40,6 +54,13 @@ namespace clothingStoreWebAPI.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Изменяет информацию о пользователе по его идентификатору.
+        /// </summary>
+        /// <param name="id">Идентификатор пользователя.</param>
+        /// <param name="updtBuyer">Схема пользователя.</param>
+        /// <returns>Информация о пользователе.</returns>
         [HttpPut("{id}")]
         public async Task<ActionResult> UpdateBuyer(BuyerAddDTO updtBuyer, Guid id){
             try{

@@ -52,7 +52,7 @@ public class BuyerBusiness : IBuyersBLL
             await _buyersDAO.AddBuyer(buyerAddDTO);
         }
         catch(ArgumentException){
-            throw new Exception("Неверный пол.");
+            throw new Exception("Неверно указан пол.");
         }
         catch(Exception ex){
             throw new Exception(ex.Message);
@@ -66,7 +66,7 @@ public class BuyerBusiness : IBuyersBLL
             await _buyersDAO.UpdateBuyer(buyerUpdateDTO, id);
         }
         catch(ArgumentException){
-            throw new Exception("Неверный пол.");
+            throw new Exception("Неверно указан пол.");
         }
         catch(Exception ex){
             throw new Exception(ex.Message);

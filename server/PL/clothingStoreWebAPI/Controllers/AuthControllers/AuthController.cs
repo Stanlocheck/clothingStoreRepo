@@ -5,6 +5,9 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace clothingStoreWebAPI.Controllers
 {
+    /// <summary>
+    /// Контроллер для работы с авторизацией пользователей.
+    /// </summary>
     [Route("api/[controller]")]
     [ApiController]
     public class AuthController : ControllerBase
@@ -15,6 +18,12 @@ namespace clothingStoreWebAPI.Controllers
             _authService = authService;
         }
 
+
+        /// <summary>
+        /// Создает пользователя.
+        /// </summary>
+        /// <param name="request">Схема регистрации.</param>
+        /// <returns>Информация о пользователе.</returns>
         [HttpPost("register")]
         public async Task<ActionResult> Register([FromBody] RegisterModel request)
         {
@@ -28,7 +37,14 @@ namespace clothingStoreWebAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-                [HttpPost("login")]
+
+
+        /// <summary>
+        /// Вход в систему пользователя.
+        /// </summary>
+        /// <param name="request">Схема авторизации.</param>
+        /// <returns>Информация о пользователе.</returns>
+        [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] LoginModel request)
         {
             try
@@ -42,6 +58,11 @@ namespace clothingStoreWebAPI.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Выход из системы пользователя.
+        /// </summary>
+        /// <returns>Информация о пользователе.</returns>
         [HttpPost("logout")]
         public async Task<ActionResult> Logout()
         {
