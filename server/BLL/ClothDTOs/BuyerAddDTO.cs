@@ -12,5 +12,4 @@ public class BuyerAddDTO
     public string City { get; set; }
     public string StreetAddress { get; set; }
     public int ApartmentNumber { get; set; }
-    public string Role { get; set; } = "Buyer";
 }

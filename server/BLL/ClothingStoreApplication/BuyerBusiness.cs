@@ -26,8 +26,7 @@ public class BuyerBusiness : IBuyersBLL
     public async Task<List<BuyerDTO>> GetAll(){
         try {
             var buyer = await _buyersDAO.GetAll();
-            var buyerDTO = _buyerDTO.Map<List<Buyer>, List<BuyerDTO>>(buyer);
-            return buyerDTO;
+            return _buyerDTO.Map<List<Buyer>, List<BuyerDTO>>(buyer);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);
@@ -37,8 +36,7 @@ public class BuyerBusiness : IBuyersBLL
      public async Task<BuyerDTO> GetById(Guid id){
         try{
             var buyer = await _buyersDAO.GetById(id);
-            var buyerDTO = _buyerDTO.Map<Buyer, BuyerDTO>(buyer);
-            return buyerDTO;
+            return _buyerDTO.Map<Buyer, BuyerDTO>(buyer);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);

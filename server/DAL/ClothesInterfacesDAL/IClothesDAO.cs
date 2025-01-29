@@ -9,4 +9,6 @@ public interface IClothesDAO
     public Task AddCloth(Cloth cloth);
     public Task UpdateCloth(Cloth clothUpdt, Guid id);
     public Task DeleteCloth(Guid id);
+    //public Task<List<Cloth>> GetMensClothing();
+    //public Task<List<Cloth>> GetWomensClothing();
 }

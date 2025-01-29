@@ -34,7 +34,7 @@ public class AuthService : IAuthService
     }
 
     public async Task Register(BuyerAddDTO buyerInfo){
-        if(await _context.Buyers.AnyAsync(b => b.Email == buyerInfo.Email) || await _context.Admins.AnyAsync(a => a.Email == buyerInfo.Email)){
+        if(await _context.Buyers.AnyAsync(b => b.Email == buyerInfo.Email)){
             throw new Exception("Пользователь с таким Email уже существует.");
         }
 
