@@ -35,7 +35,7 @@ public class AuthAdminService : IAuthAdminService
     }
 
     public async Task Register(AdminAddDTO adminInfo){
-        if(await _context.Admins.AnyAsync(a => a.Email == adminInfo.Email) || await _context.Buyers.AnyAsync(b => b.Email == adminInfo.Email)){
+        if(await _context.Admins.AnyAsync(a => a.Email == adminInfo.Email)){
             throw new Exception("Пользователь с таким Email уже существует.");
         }
 
@@ -54,8 +54,15 @@ public class AuthAdminService : IAuthAdminService
             Password = BCrypt.Net.BCrypt.HashPassword(adminInfo.Password),
             PhoneNumber = adminInfo.PhoneNumber,
         };
-        var adminAddDTO = _adminAddDTO.Map<AdminAddDTO, Admin>(admin);
-        await _adminsDAO.AddAdmin(adminAddDTO);
+
+        try{
+            var adminAddDTO = _adminAddDTO.Map<AdminAddDTO, Admin>(admin);
+            await _adminsDAO.AddAdmin(adminAddDTO);
+        }
+        catch(Exception ex){
+            throw new Exception(ex.Message);
+        }
+        
     }
 
     public async Task Login(string email, string password){
