@@ -10,11 +10,11 @@ namespace clothingStoreWebAPI.Controllers
     /// </summary>
     [Route("api/[controller]")]
     [ApiController]
-    public class HomeController : ControllerBase
+    public class ClothController : ControllerBase
     {
         private IClothBLL _clothBLL;
 
-        public HomeController(IClothBLL clothBLL) {
+        public ClothController(IClothBLL clothBLL) {
             _clothBLL = clothBLL;
         }
 
