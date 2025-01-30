@@ -39,6 +39,7 @@ public class SqlAdminsDAO : IAdminsDAO
         admin.FirstName = adminUpdt.FirstName;
         admin.LastName = adminUpdt.LastName;
         admin.Email = adminUpdt.Email;
+        admin.DateOfBirth = adminUpdt.DateOfBirth;
         admin.PhoneNumber = adminUpdt.PhoneNumber;
 
         await _dbContext.SaveChangesAsync();

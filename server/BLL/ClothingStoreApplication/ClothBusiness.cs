@@ -92,7 +92,7 @@ public class ClothBusiness : IClothBLL
         }
      }
 
-     /*public async Task<List<ClothDTO>> GetMensClothing(){
+     public async Task<List<ClothDTO>> GetMensClothing(){
         try{
             var cloth = await _clothDAO.GetMensClothing();
             return _clothDTO.Map<List<Cloth>, List<ClothDTO>>(cloth);
@@ -110,5 +110,5 @@ public class ClothBusiness : IClothBLL
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
-     }*/
+     }
 }

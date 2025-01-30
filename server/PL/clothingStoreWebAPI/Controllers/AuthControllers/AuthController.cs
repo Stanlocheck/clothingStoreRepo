@@ -1,3 +1,4 @@
+using ClothDTOs;
 using ClothesInterfacesBLL;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -25,11 +26,11 @@ namespace clothingStoreWebAPI.Controllers
         /// <param name="request">Схема регистрации.</param>
         /// <returns>Информация о пользователе.</returns>
         [HttpPost("register")]
-        public async Task<ActionResult> Register([FromBody] RegisterModel request)
+        public async Task<ActionResult> Register(BuyerAddDTO buyer)
         {
             try
             {
-                await _authService.Register(request.BuyerInfo);
+                await _authService.Register(buyer);
                 return Ok("Регистрация пользователя успешна.");
             }
             catch (Exception ex)

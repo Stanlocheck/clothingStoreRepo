@@ -54,11 +54,12 @@ public class SqlDAO : IClothesDAO
         _context.Clothes.Remove(cloth);
         await _context.SaveChangesAsync();
     }
-    /*public async Task<List<Cloth>> GetMensClothing(){
+    
+    public async Task<List<Cloth>> GetMensClothing(){
         return await _context.Clothes.Where(m => m.Sex == (Gender)0).ToListAsync();
     }
 
     public async Task<List<Cloth>> GetWomensClothing(){
         return await _context.Clothes.Where(w => w.Sex == (Gender)1).ToListAsync();
-    }*/
+    }
 }

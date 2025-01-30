@@ -104,5 +104,39 @@ namespace clothingStoreWebAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
+        /// <summary>
+        /// Получает информацию о мужских продуктах.
+        /// </summary>
+        /// <returns>Информация о продуктах.</returns>
+        [HttpGet]
+        [Route("mensClothing")]
+        public async Task<ActionResult<List<ClothDTO>>> GetMensClothing(){
+            try{
+                var cloth = await _clothBLL.GetMensClothing();
+                return Ok(cloth);
+            }
+            catch(Exception ex){
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// Получает информацию о женских продуктах.
+        /// </summary>
+        /// <returns>Информация о продуктах.</returns>
+        [HttpGet]
+        [Route("womensClothing")]
+        public async Task<ActionResult<List<ClothDTO>>> GetWomensClothing(){
+            try{
+                var cloth = await _clothBLL.GetWomensClothing();
+                return Ok(cloth);
+            }
+            catch(Exception ex){
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

@@ -1,4 +1,6 @@
-﻿namespace ClothDomain;
+﻿using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ClothDomain;
 
 public class Cloth
 {
@@ -10,5 +12,6 @@ public class Cloth
     public int? Size { get; set; }
     public string? Material { get; set; }
     public string? Manufacturer { get; set; }
+    [Column(TypeName = "varchar(50)")]
     public Gender Sex { get; set; }
 }

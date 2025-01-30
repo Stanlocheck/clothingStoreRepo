@@ -6,7 +6,7 @@ public class BuyerAddDTO
     public string LastName { get; set; }
     public string Email { get; set; }
     public string Password { get; set; }
-    public DateTime DateOfBirth { get; set; }
+    public DateOnly DateOfBirth { get; set; }
     public string Sex { get; set; }
     public string? PhoneNumber { get; set; }
     public string City { get; set; }

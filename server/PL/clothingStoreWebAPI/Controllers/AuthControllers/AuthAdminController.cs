@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ClothesInterfacesBLL;
+using ClothDTOs;
 
 namespace clothingStoreWebAPI.Controllers
 {
@@ -24,11 +25,11 @@ namespace clothingStoreWebAPI.Controllers
         /// <param name="request">Схема регистрации.</param>
         /// <returns>Информация о модераторе.</returns>
         [HttpPost("registerAdmin")]
-        public async Task<ActionResult> Register([FromBody] RegisterAdminModel request)
+        public async Task<ActionResult> Register(AdminAddDTO admin)
         {
             try
             {
-                await _authAdminService.Register(request.AdminInfo);
+                await _authAdminService.Register(admin);
                 return Ok("Регистрация пользователя успешна.");
             }
             catch (Exception ex)
