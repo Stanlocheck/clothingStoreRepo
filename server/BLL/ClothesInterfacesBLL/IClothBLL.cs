@@ -10,6 +10,6 @@ public interface IClothBLL
     public Task AddCloth(ClothAddDTO cloth);
     public Task UpdateCloth(ClothAddDTO clothUpdt, Guid id);
     public Task DeleteCloth(Guid id);
-    //public Task<List<ClothDTO>> GetMensClothing();
-    //public Task<List<ClothDTO>> GetWomensClothing();
+    public Task<List<ClothDTO>> GetMensClothing();
+    public Task<List<ClothDTO>> GetWomensClothing();
 }

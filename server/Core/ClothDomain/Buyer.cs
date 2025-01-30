@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace ClothDomain;
 
 public class Buyer
@@ -7,7 +9,8 @@ public class Buyer
     public string LastName { get; set; }
     public string Email { get; set; }
     public string Password { get; set; }
-    public DateTime DateOfBirth { get; set; }
+    public DateOnly DateOfBirth { get; set; }
+    [Column(TypeName = "varchar(50)")]
     public Gender Sex { get; set; }
     public string? PhoneNumber { get; set; }
     public string City { get; set; }

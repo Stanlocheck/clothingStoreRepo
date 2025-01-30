@@ -1,7 +1,11 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace ClothDomain;
 
 public enum Gender
 {
-    MALE,
-    FEMALE
+    [Display(Name = "Мужской")]
+    МУЖСКОЙ,
+    [Display(Name = "Женский")]
+    ЖЕНСКИЙ
 }

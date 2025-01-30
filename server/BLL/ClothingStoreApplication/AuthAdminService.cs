@@ -51,6 +51,7 @@ public class AuthAdminService : IAuthAdminService
             FirstName = adminInfo.FirstName,
             LastName = adminInfo.LastName,
             Email = adminInfo.Email,
+            DateOfBirth = adminInfo.DateOfBirth,
             Password = BCrypt.Net.BCrypt.HashPassword(adminInfo.Password),
             PhoneNumber = adminInfo.PhoneNumber,
         };
