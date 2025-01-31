@@ -8,8 +8,8 @@ public class BuyerAddDTO
     public string Password { get; set; }
     public DateOnly DateOfBirth { get; set; }
     public string Sex { get; set; }
-    public string? PhoneNumber { get; set; }
+    public string? PhoneNumber { get; set; } = null;
     public string City { get; set; }
     public string StreetAddress { get; set; }
-    public int ApartmentNumber { get; set; }
+    public int? ApartmentNumber { get; set; } = null;
 }

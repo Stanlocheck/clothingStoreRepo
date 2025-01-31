@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClothingStorePersistence;
 
-public class SqlDAO : IClothesDAO
+public class SqlDAO : IClothesDAO, ICartDAO
 {
     private readonly ApplicationDbContext _context;
 
@@ -61,5 +61,31 @@ public class SqlDAO : IClothesDAO
 
     public async Task<List<Cloth>> GetWomensClothing(){
         return await _context.Clothes.Where(w => w.Sex == (Gender)1).ToListAsync();
+    }
+
+    /*public async Task<List<Cloth>> FilterBySex(Gender gender){
+        if(gender != (Gender)0 || gender != (Gender)1){
+            throw new Exception("Неверно указан пол.");
+        }
+
+        return await _context.Clothes.Where(f => f.Sex == gender).ToListAsync();
+    }*/
+
+    public async Task AddCartItem(Guid buyerId, Guid clothId, int amount){
+        var cart = await _context.Carts.Include(c => c.Items).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
+        if(cart == null){
+            cart = new Cart { BuyerId = buyerId };
+            await _context.Carts.AddAsync(cart);
+        }
+
+        var existingItem = cart.Items.FirstOrDefault(ci => ci.ClothId == clothId);
+        if(existingItem != null){
+            existingItem.Amount += amount;
+        }
+        else {
+            cart.Items.Add(new CartItem {ClothId = clothId, Amount = amount});
+        }
+
+        await _context.SaveChangesAsync();
     }
 }

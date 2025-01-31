@@ -22,7 +22,7 @@ namespace clothingStoreWebAPI.Controllers
         /// <summary>
         /// Создает модератора.
         /// </summary>
-        /// <param name="request">Схема регистрации.</param>
+        /// <param name="admin">Схема регистрации.</param>
         /// <returns>Информация о модераторе.</returns>
         [HttpPost("registerAdmin")]
         public async Task<ActionResult> Register(AdminAddDTO admin)

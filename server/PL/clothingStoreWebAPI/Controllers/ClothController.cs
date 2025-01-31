@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using ClothesInterfacesBLL;
 using ClothDTOs;
 using Microsoft.AspNetCore.Authorization;
+using ClothDomain;
 
 namespace clothingStoreWebAPI.Controllers
 {
@@ -13,9 +14,11 @@ namespace clothingStoreWebAPI.Controllers
     public class ClothController : ControllerBase
     {
         private IClothBLL _clothBLL;
+        private ICartBLL _cartItemBLL;
 
-        public ClothController(IClothBLL clothBLL) {
+        public ClothController(IClothBLL clothBLL, ICartBLL cartItemBLL) {
             _clothBLL = clothBLL;
+            _cartItemBLL = cartItemBLL;
         }
 
 
@@ -133,6 +136,44 @@ namespace clothingStoreWebAPI.Controllers
             try{
                 var cloth = await _clothBLL.GetWomensClothing();
                 return Ok(cloth);
+            }
+            catch(Exception ex){
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        /*/// <summary>
+        /// Получает информацию отфильтрованную по полу.
+        /// </summary>
+        /// <param name="gender">Пол.</param>
+        /// <returns>Информация о продуктах.</returns>
+        [HttpGet]
+        [Route("filterBySex")]
+        public async Task<ActionResult<List<ClothDTO>>> FilterBySex(Gender gender){
+            try{
+                var cloth = await _clothBLL.FilterBySex(gender);
+                return Ok(cloth);
+            }
+            catch(Exception ex){
+                return BadRequest(ex.Message);
+            }
+        }*/
+
+
+        /// <summary>
+        /// Добавляет продукт в корзину.
+        /// </summary>
+        /// <param name="buyerId">Идентификатор покупателя.</param>
+        /// <param name="clothId">Идентификатор продукта.</param>
+        /// <param name="amount">Количество продуктов.</param>
+        /// <returns>Информация о продуктах.</returns>
+        [HttpPost]
+        [Route("AddToCart")]
+        public async Task<ActionResult> AddCartItem(Guid buyerId, Guid clothId, int amount){
+            try{
+                await _cartItemBLL.AddCartItem(buyerId, clothId, amount);
+                return Ok();
             }
             catch(Exception ex){
                 return BadRequest(ex.Message);
