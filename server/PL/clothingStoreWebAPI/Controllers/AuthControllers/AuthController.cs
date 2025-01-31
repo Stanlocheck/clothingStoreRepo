@@ -23,7 +23,7 @@ namespace clothingStoreWebAPI.Controllers
         /// <summary>
         /// Создает пользователя.
         /// </summary>
-        /// <param name="request">Схема регистрации.</param>
+        /// <param name="buyer">Схема регистрации.</param>
         /// <returns>Информация о пользователе.</returns>
         [HttpPost("register")]
         public async Task<ActionResult> Register(BuyerAddDTO buyer)

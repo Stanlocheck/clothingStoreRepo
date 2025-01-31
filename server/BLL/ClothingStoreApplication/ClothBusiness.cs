@@ -8,21 +8,25 @@ using ClothingStorePersistence;
 
 namespace ClothingStoreApplication;
 
-public class ClothBusiness : IClothBLL
+public class ClothBusiness : IClothBLL, ICartBLL
 {
     private Mapper _clothDTO;
     private Mapper _clothAddDTO;
+    private Mapper _cartItemAddDTO;
     private readonly IClothesDAO _clothDAO;
-    public ClothBusiness(IClothesDAO clothDAO){
+    private readonly ICartDAO _cartDAO;
+    public ClothBusiness(IClothesDAO clothDAO, ICartDAO cartDAO){
         _clothDAO = clothDAO;
+        _cartDAO = cartDAO;
 
-        var _clothDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Cloth, ClothDTO>()
-            .ForMember(dest => dest.Sex, opt => opt.MapFrom(src => src.Sex.ToString())).ReverseMap());
+        var _clothDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Cloth, ClothDTO>().ReverseMap());
         _clothDTO = new Mapper(_clothDtoMapping);
 
-        var _clothAddDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Cloth, ClothAddDTO>()
-            .ForMember(dest => dest.Sex, opt => opt.MapFrom(src => src.Sex.ToString())).ReverseMap());
+        var _clothAddDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Cloth, ClothAddDTO>().ReverseMap());
         _clothAddDTO = new Mapper(_clothAddDtoMapping);
+
+        var _cartItemAddDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<CartItem, CartItemAddDTO>().ReverseMap());
+        _cartItemAddDTO = new Mapper(_cartItemAddDtoMapping);
     }
 
     public async Task<List<ClothDTO>> GetAll(){
@@ -69,8 +73,18 @@ public class ClothBusiness : IClothBLL
         }
      }
 
-     public async Task UpdateCloth(ClothAddDTO cloth, Guid id){
+     public async Task UpdateCloth(ClothAddDTO clothInfo, Guid id){
         try{
+            var cloth = new ClothAddDTO {
+                Price = clothInfo.Price,
+                Type = clothInfo.Type,
+                Brand = clothInfo.Brand,
+                Season = clothInfo.Season,
+                Size = clothInfo.Size,
+                Material = clothInfo.Material,
+                Manufacturer = clothInfo.Manufacturer,
+                Sex = clothInfo.Sex.ToUpper()
+            };
             Enum.Parse<Gender>(cloth.Sex);
             var clothUpdateDTO = _clothAddDTO.Map<ClothAddDTO, Cloth>(cloth);
             await _clothDAO.UpdateCloth(clothUpdateDTO, id);
@@ -106,6 +120,25 @@ public class ClothBusiness : IClothBLL
         try{
             var cloth = await _clothDAO.GetWomensClothing();
             return _clothDTO.Map<List<Cloth>, List<ClothDTO>>(cloth);
+        }
+        catch(Exception ex){
+            throw new Exception(ex.Message);
+        }
+     }
+
+     /*public async Task<List<ClothDTO>> FilterBySex(Gender gender){
+        try{
+            var cloth = await _clothDAO.FilterBySex(gender);
+            return _clothDTO.Map<List<Cloth>, List<ClothDTO>>(cloth);
+        }
+        catch(Exception ex){
+            throw new Exception(ex.Message);
+        }
+     }*/
+
+     public async Task AddCartItem(Guid buyerId, Guid clothId, int amount){
+        try{
+            await _cartDAO.AddCartItem(buyerId, clothId, amount);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);

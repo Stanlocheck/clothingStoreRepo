@@ -43,8 +43,20 @@ public class BuyerBusiness : IBuyersBLL
         }
      }
 
-     public async Task AddBuyer(BuyerAddDTO buyer){
+     public async Task AddBuyer(BuyerAddDTO buyerInfo){
         try{
+            var buyer = new BuyerAddDTO {
+                FirstName = buyerInfo.FirstName,
+                LastName = buyerInfo.LastName,
+                Email = buyerInfo.Email,
+                Password = buyerInfo.Password,
+                DateOfBirth = buyerInfo.DateOfBirth,
+                Sex = buyerInfo.Sex.ToUpper(),
+                PhoneNumber = buyerInfo.PhoneNumber,
+                City = buyerInfo.City,
+                StreetAddress = buyerInfo.StreetAddress,
+                ApartmentNumber = buyerInfo.ApartmentNumber
+            };
             Enum.Parse<Gender>(buyer.Sex);
             var buyerAddDTO = _buyerAddDTO.Map<BuyerAddDTO, Buyer>(buyer);
             await _buyersDAO.AddBuyer(buyerAddDTO);
@@ -57,8 +69,20 @@ public class BuyerBusiness : IBuyersBLL
         }
      }
 
-     public async Task UpdateBuyer(BuyerAddDTO buyer, Guid id){
+     public async Task UpdateBuyer(BuyerAddDTO buyerInfo, Guid id){
         try{
+            var buyer = new BuyerAddDTO {
+                FirstName = buyerInfo.FirstName,
+                LastName = buyerInfo.LastName,
+                Email = buyerInfo.Email,
+                Password = buyerInfo.Password,
+                DateOfBirth = buyerInfo.DateOfBirth,
+                Sex = buyerInfo.Sex.ToUpper(),
+                PhoneNumber = buyerInfo.PhoneNumber,
+                City = buyerInfo.City,
+                StreetAddress = buyerInfo.StreetAddress,
+                ApartmentNumber = buyerInfo.ApartmentNumber
+            };
             Enum.Parse<Gender>(buyer.Sex);
             var buyerUpdateDTO = _buyerAddDTO.Map<BuyerAddDTO, Buyer>(buyer);
             await _buyersDAO.UpdateBuyer(buyerUpdateDTO, id);

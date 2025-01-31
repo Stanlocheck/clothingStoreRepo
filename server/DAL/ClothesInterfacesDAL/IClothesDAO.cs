@@ -11,4 +11,5 @@ public interface IClothesDAO
     public Task DeleteCloth(Guid id);
     public Task<List<Cloth>> GetMensClothing();
     public Task<List<Cloth>> GetWomensClothing();
+    //public Task<List<Cloth>> FilterBySex(Gender gender);
 }

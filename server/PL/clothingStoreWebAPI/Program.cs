@@ -59,6 +59,8 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddScoped<IClothesDAO, SqlDAO>();
 builder.Services.AddScoped<IClothBLL, ClothBusiness>();
+builder.Services.AddScoped<ICartDAO, SqlDAO>();
+builder.Services.AddScoped<ICartBLL, ClothBusiness>();
 
 builder.Services.AddScoped<IBuyersDAO, SqlBuyersDAO>();
 builder.Services.AddScoped<IBuyersBLL, BuyerBusiness>();
