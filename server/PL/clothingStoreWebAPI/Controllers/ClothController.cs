@@ -166,14 +166,33 @@ namespace clothingStoreWebAPI.Controllers
         /// </summary>
         /// <param name="buyerId">Идентификатор покупателя.</param>
         /// <param name="clothId">Идентификатор продукта.</param>
-        /// <param name="amount">Количество продуктов.</param>
-        /// <returns>Информация о продуктах.</returns>
+        /// <returns>Информация о продукте.</returns>
+        [Authorize(Policy = "BuyerOnly")]
         [HttpPost]
         [Route("AddToCart")]
-        public async Task<ActionResult> AddCartItem(Guid buyerId, Guid clothId, int amount){
+        public async Task<ActionResult> AddCartItem(Guid buyerId, Guid clothId){
             try{
-                await _cartItemBLL.AddCartItem(buyerId, clothId, amount);
+                await _cartItemBLL.AddCartItem(buyerId, clothId);
                 return Ok();
+            }
+            catch(Exception ex){
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// Получает информацию о продуктах в корзине по идентификатору покупателя.
+        /// </summary>
+        /// <param name="buyerId">Идентификатор покупателя.</param>
+        /// <returns>Информация о продуктах.</returns>
+        [Authorize(Policy = "BuyerOnly")]
+        [HttpGet]
+        [Route("cart")]
+        public async Task<ActionResult<List<CartItemDTO>>> GetCartItems(Guid buyerId){
+            try{
+                var cart = await _cartItemBLL.GetCartItems(buyerId);
+                return Ok(cart); 
             }
             catch(Exception ex){
                 return BadRequest(ex.Message);
