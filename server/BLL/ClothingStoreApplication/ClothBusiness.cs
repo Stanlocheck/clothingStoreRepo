@@ -12,7 +12,7 @@ public class ClothBusiness : IClothBLL, ICartBLL
 {
     private Mapper _clothDTO;
     private Mapper _clothAddDTO;
-    private Mapper _cartItemAddDTO;
+    private Mapper _cartItemDTO;
     private readonly IClothesDAO _clothDAO;
     private readonly ICartDAO _cartDAO;
     public ClothBusiness(IClothesDAO clothDAO, ICartDAO cartDAO){
@@ -25,8 +25,17 @@ public class ClothBusiness : IClothBLL, ICartBLL
         var _clothAddDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Cloth, ClothAddDTO>().ReverseMap());
         _clothAddDTO = new Mapper(_clothAddDtoMapping);
 
-        var _cartItemAddDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<CartItem, CartItemAddDTO>().ReverseMap());
-        _cartItemAddDTO = new Mapper(_cartItemAddDtoMapping);
+        var _cartItemDtoMapping = new MapperConfiguration(cfg => {
+            cfg.CreateMap<CartItem, CartItemDTO>()
+                .ForMember(dest => dest.Cloth, opt => opt.MapFrom(src => src.Cloth))
+                .ForMember(dest => dest.Cart, opt => opt.MapFrom(src => src.Cart));
+            cfg.CreateMap<Cart, CartDTO>()
+                .ForMember(dest => dest.Buyer, opt => opt.MapFrom(src => src.Buyer))
+                .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items));
+            cfg.CreateMap<Buyer, BuyerDTO>();
+            cfg.CreateMap<Cloth, ClothDTO>();
+        });
+        _cartItemDTO = new Mapper(_cartItemDtoMapping);
     }
 
     public async Task<List<ClothDTO>> GetAll(){
@@ -136,9 +145,19 @@ public class ClothBusiness : IClothBLL, ICartBLL
         }
      }*/
 
-     public async Task AddCartItem(Guid buyerId, Guid clothId, int amount){
+     public async Task AddCartItem(Guid buyerId, Guid clothId){
         try{
-            await _cartDAO.AddCartItem(buyerId, clothId, amount);
+            await _cartDAO.AddCartItem(buyerId, clothId);
+        }
+        catch(Exception ex){
+            throw new Exception(ex.Message);
+        }
+     }
+
+     public async Task<List<CartItemDTO>> GetCartItems(Guid buyerId){
+        try{
+            var cart = await _cartDAO.GetCartItems(buyerId);
+            return _cartItemDTO.Map<List<CartItemDTO>>(cart);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);

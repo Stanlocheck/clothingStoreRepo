@@ -5,5 +5,6 @@ namespace ClothesInterfacesBLL;
 
 public interface ICartBLL
 {
-    public Task AddCartItem(Guid buyerId, Guid clothId, int amount);
+    public Task<List<CartItemDTO>> GetCartItems(Guid buyerId);
+    public Task AddCartItem(Guid buyerId, Guid clothId);
 }

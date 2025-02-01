@@ -71,7 +71,7 @@ public class SqlDAO : IClothesDAO, ICartDAO
         return await _context.Clothes.Where(f => f.Sex == gender).ToListAsync();
     }*/
 
-    public async Task AddCartItem(Guid buyerId, Guid clothId, int amount){
+    public async Task AddCartItem(Guid buyerId, Guid clothId){
         var cart = await _context.Carts.Include(c => c.Items).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
         if(cart == null){
             cart = new Cart { BuyerId = buyerId };
@@ -80,12 +80,18 @@ public class SqlDAO : IClothesDAO, ICartDAO
 
         var existingItem = cart.Items.FirstOrDefault(ci => ci.ClothId == clothId);
         if(existingItem != null){
-            existingItem.Amount += amount;
+            existingItem.Amount++;
         }
         else {
-            cart.Items.Add(new CartItem {ClothId = clothId, Amount = amount});
+            cart.Items.Add(new CartItem {ClothId = clothId, Amount = 1});
         }
 
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<CartItem>> GetCartItems(Guid buyerId){
+        var cart = await _context.Carts.Include(c => c.Items).ThenInclude(ci => ci.Cloth).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
+
+        return cart.Items.ToList();
     }
 }
