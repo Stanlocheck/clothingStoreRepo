@@ -17,12 +17,12 @@ public class SqlBuyersDAO : IBuyersDAO
         return await _context.Buyers.ToListAsync();
     }
     public async Task<Buyer> GetById(Guid id){
-        var buyer = _context.Buyers.Where(_buyer => _buyer.Id == id);
+        var buyer = await _context.Buyers.FirstOrDefaultAsync(_buyer => _buyer.Id == id);
         if(buyer == null){
             throw new Exception("User not found.");
         }
 
-        return await buyer.FirstOrDefaultAsync();
+        return buyer;
     }
     public async Task AddBuyer(Buyer buyer){
         await _context.Buyers.AddAsync(buyer);

@@ -12,9 +12,9 @@ public class Buyer
     public DateOnly DateOfBirth { get; set; }
     [Column(TypeName = "text")]
     public Gender Sex { get; set; }
-    public string? PhoneNumber { get; set; }
+    public string PhoneNumber { get; set; }
     public string City { get; set; }
     public string StreetAddress { get; set; }
-    public int? ApartmentNumber { get; set; }
+    public int ApartmentNumber { get; set; }
     public string Role { get; set; } = "Buyer";
 }
