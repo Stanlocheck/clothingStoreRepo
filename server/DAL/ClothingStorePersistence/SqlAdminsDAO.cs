@@ -18,12 +18,12 @@ public class SqlAdminsDAO : IAdminsDAO
     }
 
     public async Task<Admin> GetById(Guid id){
-        var admin = _dbContext.Admins.Where(_admin => _admin.Id == id);
+        var admin = await _dbContext.Admins.FirstOrDefaultAsync(_admin => _admin.Id == id);
         if(admin == null){
             throw new Exception("User not found");
         }
 
-        return await admin.FirstOrDefaultAsync();
+        return admin;
     }
 
     public async Task AddAdmin(Admin admin){

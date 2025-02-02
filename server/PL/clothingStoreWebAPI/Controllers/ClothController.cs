@@ -198,5 +198,45 @@ namespace clothingStoreWebAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
+        /// <summary>
+        /// Изменяет количество продукта в корзине на +1.
+        /// </summary>
+        /// <param name="buyerId">Идентификатор покупателя.</param>
+        /// <param name="clothId">Идентификатор продукта.</param>
+        /// <returns>Информация о продукте.</returns>
+        [Authorize(Policy = "BuyerOnly")]
+        [HttpPut]
+        [Route("addAmount")]
+        public async Task<ActionResult> AddAmount(Guid buyerId, Guid clothId){
+            try{
+                await _cartItemBLL.AddAmount(buyerId, clothId);
+                return Ok(); 
+            }
+            catch(Exception ex){
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// Изменяет количество продукта в корзине на -1.
+        /// </summary>
+        /// <param name="buyerId">Идентификатор покупателя.</param>
+        /// <param name="clothId">Идентификатор продукта.</param>
+        /// <returns>Информация о продукте.</returns>
+        [Authorize(Policy = "BuyerOnly")]
+        [HttpPut]
+        [Route("reduceAmount")]
+        public async Task<ActionResult> ReduceAmount(Guid buyerId, Guid clothId){
+            try{
+                await _cartItemBLL.ReduceAmount(buyerId, clothId);
+                return Ok(); 
+            }
+            catch(Exception ex){
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

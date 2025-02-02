@@ -17,12 +17,12 @@ public class SqlDAO : IClothesDAO, ICartDAO
         return await _context.Clothes.ToListAsync();
     }
     public async Task<Cloth> GetById(Guid id){
-        var cloth = _context.Clothes.Where(_cloth => _cloth.Id == id);
+        var cloth = await _context.Clothes.FirstOrDefaultAsync(_cloth => _cloth.Id == id);
         if(cloth == null){
             throw new Exception("Object not found.");
         }
 
-        return await cloth.FirstOrDefaultAsync();
+        return cloth;
     }
     public async Task AddCloth(Cloth cloth){
         await _context.Clothes.AddAsync(cloth);
@@ -91,7 +91,48 @@ public class SqlDAO : IClothesDAO, ICartDAO
 
     public async Task<List<CartItem>> GetCartItems(Guid buyerId){
         var cart = await _context.Carts.Include(c => c.Items).ThenInclude(ci => ci.Cloth).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
+        if(cart == null){
+            throw new Exception("Object not found.");
+        }
 
         return cart.Items.ToList();
+    }
+
+    public async Task AddAmount(Guid buyerId, Guid clothId){
+        var cart = await _context.Carts.Include(c => c.Items).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
+        if(cart == null){
+            throw new Exception("Object not found.");
+        }
+
+        var existingItem = cart.Items.FirstOrDefault(ci => ci.ClothId == clothId);
+        if(existingItem == null){
+            throw new Exception("Object not found.");
+        }
+        else{
+            existingItem.Amount++;
+        }
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task ReduceAmount(Guid buyerId, Guid clothId){
+        var cart = await _context.Carts.Include(c => c.Items).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
+        if(cart == null){
+            throw new Exception("Object not found.");
+        }
+
+        var existingItem = cart.Items.FirstOrDefault(ci => ci.ClothId == clothId);
+        if(existingItem == null){
+            throw new Exception("Object not found.");
+        }
+        else{
+            existingItem.Amount--;
+        }
+
+        if(existingItem.Amount == 0){
+            _context.Remove(existingItem);
+        }
+
+        await _context.SaveChangesAsync();
     }
 }

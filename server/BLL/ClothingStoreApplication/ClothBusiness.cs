@@ -163,4 +163,22 @@ public class ClothBusiness : IClothBLL, ICartBLL
             throw new Exception(ex.Message);
         }
      }
+
+     public async Task AddAmount(Guid buyerId, Guid clothId){
+        try{
+            await _cartDAO.AddAmount(buyerId, clothId);
+        }
+        catch(Exception ex){
+            throw new Exception(ex.Message);
+        }
+     }
+
+     public async Task ReduceAmount(Guid buyerId, Guid clothId){
+        try{
+            await _cartDAO.ReduceAmount(buyerId, clothId);
+        }
+        catch(Exception ex){
+            throw new Exception(ex.Message);
+        }
+     }
 }
