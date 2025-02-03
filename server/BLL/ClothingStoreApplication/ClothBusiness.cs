@@ -1,10 +1,12 @@
 ﻿using System.Runtime.InteropServices;
+using System.Security.Claims;
 using AutoMapper;
 using ClothDomain;
 using ClothDTOs;
 using ClothesInterfacesBLL;
 using ClothesInterfacesDAL;
 using ClothingStorePersistence;
+using Microsoft.AspNetCore.Http;
 
 namespace ClothingStoreApplication;
 
@@ -15,9 +17,11 @@ public class ClothBusiness : IClothBLL, ICartBLL
     private Mapper _cartItemDTO;
     private readonly IClothesDAO _clothDAO;
     private readonly ICartDAO _cartDAO;
-    public ClothBusiness(IClothesDAO clothDAO, ICartDAO cartDAO){
+    private readonly IHttpContextAccessor _httpContextAccessor;
+    public ClothBusiness(IClothesDAO clothDAO, ICartDAO cartDAO, IHttpContextAccessor httpContextAccessor){
         _clothDAO = clothDAO;
         _cartDAO = cartDAO;
+        _httpContextAccessor = httpContextAccessor;
 
         var _clothDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Cloth, ClothDTO>().ReverseMap());
         _clothDTO = new Mapper(_clothDtoMapping);
@@ -38,6 +42,21 @@ public class ClothBusiness : IClothBLL, ICartBLL
         _cartItemDTO = new Mapper(_cartItemDtoMapping);
     }
 
+    private Guid GetLoggedInBuyerId(){
+        var httpContext = _httpContextAccessor.HttpContext;
+        if(httpContext == null){
+            throw new Exception("HttpContext недоступен.");
+        }
+
+        var buyerIdClaim = httpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
+
+        if(buyerIdClaim == null || !Guid.TryParse(buyerIdClaim.Value, out var buyerId)){
+            throw new Exception("Пользователь не авторизован.");
+        }
+
+        return buyerId;
+    }
+
     public async Task<List<ClothDTO>> GetAll(){
         try {
             var cloth = await _clothDAO.GetAll();
@@ -46,9 +65,9 @@ public class ClothBusiness : IClothBLL, ICartBLL
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
-     }
+    }
 
-     public async Task<ClothDTO> GetById(Guid id){
+    public async Task<ClothDTO> GetById(Guid id){
         try{
             var cloth = await _clothDAO.GetById(id);
             return _clothDTO.Map<Cloth, ClothDTO>(cloth);
@@ -56,9 +75,9 @@ public class ClothBusiness : IClothBLL, ICartBLL
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
-     }
+    }
 
-     public async Task AddCloth(ClothAddDTO clothInfo){
+    public async Task AddCloth(ClothAddDTO clothInfo){
         try{
             var cloth = new ClothAddDTO {
                 Price = clothInfo.Price,
@@ -80,9 +99,9 @@ public class ClothBusiness : IClothBLL, ICartBLL
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
-     }
+    }
 
-     public async Task UpdateCloth(ClothAddDTO clothInfo, Guid id){
+    public async Task UpdateCloth(ClothAddDTO clothInfo, Guid id){
         try{
             var cloth = new ClothAddDTO {
                 Price = clothInfo.Price,
@@ -104,18 +123,18 @@ public class ClothBusiness : IClothBLL, ICartBLL
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
-     }
+    }
 
-     public async Task DeleteCloth(Guid id){
+    public async Task DeleteCloth(Guid id){
         try{
             await _clothDAO.DeleteCloth(id);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
-     }
+    }
 
-     public async Task<List<ClothDTO>> GetMensClothing(){
+    public async Task<List<ClothDTO>> GetMensClothing(){
         try{
             var cloth = await _clothDAO.GetMensClothing();
             return _clothDTO.Map<List<Cloth>, List<ClothDTO>>(cloth);
@@ -123,9 +142,9 @@ public class ClothBusiness : IClothBLL, ICartBLL
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
-     }
+    }
 
-     public async Task<List<ClothDTO>> GetWomensClothing(){
+    public async Task<List<ClothDTO>> GetWomensClothing(){
         try{
             var cloth = await _clothDAO.GetWomensClothing();
             return _clothDTO.Map<List<Cloth>, List<ClothDTO>>(cloth);
@@ -133,9 +152,9 @@ public class ClothBusiness : IClothBLL, ICartBLL
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
-     }
+    }
 
-     /*public async Task<List<ClothDTO>> FilterBySex(Gender gender){
+    /*public async Task<List<ClothDTO>> FilterBySex(Gender gender){
         try{
             var cloth = await _clothDAO.FilterBySex(gender);
             return _clothDTO.Map<List<Cloth>, List<ClothDTO>>(cloth);
@@ -143,42 +162,46 @@ public class ClothBusiness : IClothBLL, ICartBLL
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
-     }*/
+    }*/
 
-     public async Task AddCartItem(Guid buyerId, Guid clothId){
+    public async Task AddCartItem(Guid clothId){
         try{
+            var buyerId = GetLoggedInBuyerId();
             await _cartDAO.AddCartItem(buyerId, clothId);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
-     }
+    }
 
-     public async Task<List<CartItemDTO>> GetCartItems(Guid buyerId){
+    public async Task<List<CartItemDTO>> GetCartItems(){
         try{
+            var buyerId = GetLoggedInBuyerId();
             var cart = await _cartDAO.GetCartItems(buyerId);
             return _cartItemDTO.Map<List<CartItemDTO>>(cart);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
-     }
+    }
 
-     public async Task AddAmount(Guid buyerId, Guid clothId){
+    public async Task AddAmount(Guid clothId){
         try{
+            var buyerId = GetLoggedInBuyerId();
             await _cartDAO.AddAmount(buyerId, clothId);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
-     }
+    }
 
-     public async Task ReduceAmount(Guid buyerId, Guid clothId){
+    public async Task ReduceAmount(Guid clothId){
         try{
+            var buyerId = GetLoggedInBuyerId();
             await _cartDAO.ReduceAmount(buyerId, clothId);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
-     }
+    }
 }

@@ -164,15 +164,14 @@ namespace clothingStoreWebAPI.Controllers
         /// <summary>
         /// Добавляет продукт в корзину.
         /// </summary>
-        /// <param name="buyerId">Идентификатор покупателя.</param>
         /// <param name="clothId">Идентификатор продукта.</param>
         /// <returns>Информация о продукте.</returns>
         [Authorize(Policy = "BuyerOnly")]
         [HttpPost]
         [Route("AddToCart")]
-        public async Task<ActionResult> AddCartItem(Guid buyerId, Guid clothId){
+        public async Task<ActionResult> AddCartItem(Guid clothId){
             try{
-                await _cartItemBLL.AddCartItem(buyerId, clothId);
+                await _cartItemBLL.AddCartItem(clothId);
                 return Ok();
             }
             catch(Exception ex){
@@ -182,17 +181,16 @@ namespace clothingStoreWebAPI.Controllers
 
 
         /// <summary>
-        /// Получает информацию о продуктах в корзине по идентификатору покупателя.
+        /// Получает информацию о продуктах в корзине авторизованного пользователя.
         /// </summary>
-        /// <param name="buyerId">Идентификатор покупателя.</param>
         /// <returns>Информация о продуктах.</returns>
         [Authorize(Policy = "BuyerOnly")]
         [HttpGet]
         [Route("cart")]
-        public async Task<ActionResult<List<CartItemDTO>>> GetCartItems(Guid buyerId){
+        public async Task<ActionResult<List<CartItemDTO>>> GetCartItems(){
             try{
-                var cart = await _cartItemBLL.GetCartItems(buyerId);
-                return Ok(cart); 
+                var cart = await _cartItemBLL.GetCartItems();
+                return Ok(cart);
             }
             catch(Exception ex){
                 return BadRequest(ex.Message);
@@ -203,15 +201,14 @@ namespace clothingStoreWebAPI.Controllers
         /// <summary>
         /// Изменяет количество продукта в корзине на +1.
         /// </summary>
-        /// <param name="buyerId">Идентификатор покупателя.</param>
         /// <param name="clothId">Идентификатор продукта.</param>
         /// <returns>Информация о продукте.</returns>
         [Authorize(Policy = "BuyerOnly")]
         [HttpPut]
         [Route("addAmount")]
-        public async Task<ActionResult> AddAmount(Guid buyerId, Guid clothId){
+        public async Task<ActionResult> AddAmount(Guid clothId){
             try{
-                await _cartItemBLL.AddAmount(buyerId, clothId);
+                await _cartItemBLL.AddAmount(clothId);
                 return Ok(); 
             }
             catch(Exception ex){
@@ -223,15 +220,14 @@ namespace clothingStoreWebAPI.Controllers
         /// <summary>
         /// Изменяет количество продукта в корзине на -1.
         /// </summary>
-        /// <param name="buyerId">Идентификатор покупателя.</param>
         /// <param name="clothId">Идентификатор продукта.</param>
         /// <returns>Информация о продукте.</returns>
         [Authorize(Policy = "BuyerOnly")]
         [HttpPut]
         [Route("reduceAmount")]
-        public async Task<ActionResult> ReduceAmount(Guid buyerId, Guid clothId){
+        public async Task<ActionResult> ReduceAmount(Guid clothId){
             try{
-                await _cartItemBLL.ReduceAmount(buyerId, clothId);
+                await _cartItemBLL.ReduceAmount(clothId);
                 return Ok(); 
             }
             catch(Exception ex){

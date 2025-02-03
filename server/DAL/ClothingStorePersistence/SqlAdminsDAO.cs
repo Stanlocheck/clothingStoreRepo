@@ -20,7 +20,7 @@ public class SqlAdminsDAO : IAdminsDAO
     public async Task<Admin> GetById(Guid id){
         var admin = await _dbContext.Admins.FirstOrDefaultAsync(_admin => _admin.Id == id);
         if(admin == null){
-            throw new Exception("User not found");
+            throw new Exception("Пользователь не найден.");
         }
 
         return admin;
@@ -33,7 +33,7 @@ public class SqlAdminsDAO : IAdminsDAO
     public async Task UpdateAdmin(Admin adminUpdt, Guid id){
         var admin = await _dbContext.Admins.FindAsync(id);  
         if(admin == null){
-            throw new Exception("User not found.");
+            throw new Exception("Пользователь не найден.");
         } 
 
         admin.FirstName = adminUpdt.FirstName;
@@ -47,7 +47,7 @@ public class SqlAdminsDAO : IAdminsDAO
     public async Task DeleteAdmin(Guid id){
         var admin = await _dbContext.Admins.FindAsync(id);
         if(admin == null){
-            throw new Exception("User not found.");
+            throw new Exception("Пользователь не найден.");
         }
 
         _dbContext.Admins.Remove(admin);
