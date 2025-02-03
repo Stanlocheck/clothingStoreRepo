@@ -4,6 +4,8 @@ using ClothDomain;
 using ClothesInterfacesBLL;
 using ClothesInterfacesDAL;
 using ClothDTOs;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace ClothingStoreApplication;
 
@@ -12,43 +14,47 @@ public class AdminBusiness : IAdminsBLL
     private readonly IAdminsDAO _adminsDAO;
     private Mapper _adminDTO;
     private Mapper _adminAddDTO;
+    private Mapper _adminUpdateDTO;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-    public AdminBusiness(IAdminsDAO adminsDAO){
+    public AdminBusiness(IAdminsDAO adminsDAO, IHttpContextAccessor httpContextAccessor){
         _adminsDAO = adminsDAO;
+        _httpContextAccessor = httpContextAccessor;
 
         var _adminDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Admin, AdminDTO>().ReverseMap());
         _adminDTO = new Mapper(_adminDtoMapping);
 
         var _adminAddDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Admin, AdminAddDTO>().ReverseMap());
         _adminAddDTO = new Mapper(_adminAddDtoMapping);
+
+        var _adminUpdateDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Admin, AdminUpdateDTO>().ReverseMap());
+        _adminUpdateDTO = new Mapper(_adminUpdateDtoMapping);
     }
 
-     public async Task AddAdmin(AdminAddDTO admin){
-        try{
-            var adminAddDTO = _adminAddDTO.Map<AdminAddDTO, Admin>(admin);
-            await _adminsDAO.AddAdmin(adminAddDTO);
+    private Guid GetLoggedInBuyerId(){
+        var httpContext = _httpContextAccessor.HttpContext;
+        if(httpContext == null){
+            throw new Exception("HttpContext недоступен.");
         }
-        catch(Exception ex){
-            throw new Exception(ex.Message);
-        }
-     }
 
-     public async Task UpdateAdmin(AdminAddDTO admin, Guid id){
-        try{
-            var adminUpdateDTO = _adminAddDTO.Map<AdminAddDTO, Admin>(admin);
-            await _adminsDAO.UpdateAdmin(adminUpdateDTO, id);
-        }
-        catch(Exception ex){
-            throw new Exception(ex.Message);
-        }
-     }
+        var adminIdClaim = httpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
 
-     public async Task DeleteAdmin(Guid id){
+        if(adminIdClaim == null || !Guid.TryParse(adminIdClaim.Value, out var adminId)){
+            throw new Exception("Пользователь не авторизован.");
+        }
+
+        return adminId;
+    }
+
+    public async Task UpdateAdmin(AdminUpdateDTO admin){
         try{
-            await _adminsDAO.DeleteAdmin(id);
+            var adminId = GetLoggedInBuyerId();
+
+            var adminUpdateDTO = _adminUpdateDTO.Map<AdminUpdateDTO, Admin>(admin);
+            await _adminsDAO.UpdateAdmin(adminUpdateDTO, adminId);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
-     } 
+    }
 }

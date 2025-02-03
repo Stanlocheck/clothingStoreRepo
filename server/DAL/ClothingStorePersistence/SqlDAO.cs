@@ -19,7 +19,7 @@ public class SqlDAO : IClothesDAO, ICartDAO
     public async Task<Cloth> GetById(Guid id){
         var cloth = await _context.Clothes.FirstOrDefaultAsync(_cloth => _cloth.Id == id);
         if(cloth == null){
-            throw new Exception("Object not found.");
+            throw new Exception("Продукт не найден.");
         }
 
         return cloth;
@@ -31,7 +31,7 @@ public class SqlDAO : IClothesDAO, ICartDAO
     public async Task UpdateCloth(Cloth clothUpdt, Guid id){
         var cloth = await _context.Clothes.FindAsync(id);  
         if(cloth == null){
-            throw new Exception("Object not found.");
+            throw new Exception("Продукт не найден.");
         } 
 
         cloth.Price = clothUpdt.Price;
@@ -48,7 +48,7 @@ public class SqlDAO : IClothesDAO, ICartDAO
     public async Task DeleteCloth(Guid id){
         var cloth = await _context.Clothes.FindAsync(id);
         if(cloth == null){
-            throw new Exception("Object not found.");
+            throw new Exception("Продукт не найден.");
         }
 
         _context.Clothes.Remove(cloth);
@@ -92,7 +92,7 @@ public class SqlDAO : IClothesDAO, ICartDAO
     public async Task<List<CartItem>> GetCartItems(Guid buyerId){
         var cart = await _context.Carts.Include(c => c.Items).ThenInclude(ci => ci.Cloth).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
         if(cart == null){
-            throw new Exception("Object not found.");
+            throw new Exception("Корзина не найдена.");
         }
 
         return cart.Items.ToList();
@@ -101,12 +101,12 @@ public class SqlDAO : IClothesDAO, ICartDAO
     public async Task AddAmount(Guid buyerId, Guid clothId){
         var cart = await _context.Carts.Include(c => c.Items).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
         if(cart == null){
-            throw new Exception("Object not found.");
+            throw new Exception("Корзина не найдена.");
         }
 
         var existingItem = cart.Items.FirstOrDefault(ci => ci.ClothId == clothId);
         if(existingItem == null){
-            throw new Exception("Object not found.");
+            throw new Exception("Продукт не найден.");
         }
         else{
             existingItem.Amount++;
@@ -118,12 +118,12 @@ public class SqlDAO : IClothesDAO, ICartDAO
     public async Task ReduceAmount(Guid buyerId, Guid clothId){
         var cart = await _context.Carts.Include(c => c.Items).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
         if(cart == null){
-            throw new Exception("Object not found.");
+            throw new Exception("Корзина не найдена.");
         }
 
         var existingItem = cart.Items.FirstOrDefault(ci => ci.ClothId == clothId);
         if(existingItem == null){
-            throw new Exception("Object not found.");
+            throw new Exception("Продукт не найден.");
         }
         else{
             existingItem.Amount--;

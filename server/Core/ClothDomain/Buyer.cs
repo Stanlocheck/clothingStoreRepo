@@ -9,6 +9,7 @@ public class Buyer
     public string LastName { get; set; }
     public string Email { get; set; }
     public string Password { get; set; }
+    public DateTime DateOfReg { get; set; }
     public DateOnly DateOfBirth { get; set; }
     [Column(TypeName = "text")]
     public Gender Sex { get; set; }

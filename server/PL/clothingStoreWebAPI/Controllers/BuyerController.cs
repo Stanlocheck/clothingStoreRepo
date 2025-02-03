@@ -56,15 +56,14 @@ namespace clothingStoreWebAPI.Controllers
 
 
         /// <summary>
-        /// Изменяет информацию о пользователе по его идентификатору.
+        /// Изменяет информацию авторизованного пользователя.
         /// </summary>
-        /// <param name="id">Идентификатор пользователя.</param>
         /// <param name="updtBuyer">Схема пользователя.</param>
         /// <returns>Информация о пользователе.</returns>
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateBuyer(BuyerAddDTO updtBuyer, Guid id){
+        [HttpPut]
+        public async Task<ActionResult> UpdateBuyer(BuyerUpdateDTO updtBuyer){
             try{
-                await _buyerBLL.UpdateBuyer(updtBuyer, id);
+                await _buyerBLL.UpdateBuyer(updtBuyer);
                 return Ok(updtBuyer);
             }
             catch(Exception ex){

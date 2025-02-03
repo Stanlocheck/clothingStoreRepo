@@ -19,7 +19,7 @@ public class SqlBuyersDAO : IBuyersDAO
     public async Task<Buyer> GetById(Guid id){
         var buyer = await _context.Buyers.FirstOrDefaultAsync(_buyer => _buyer.Id == id);
         if(buyer == null){
-            throw new Exception("User not found.");
+            throw new Exception("Пользователь не найден.");
         }
 
         return buyer;
@@ -31,12 +31,11 @@ public class SqlBuyersDAO : IBuyersDAO
     public async Task UpdateBuyer(Buyer buyerUpdt, Guid id){
         var buyer = await _context.Buyers.FindAsync(id);  
         if(buyer == null){
-            throw new Exception("User not found.");
+            throw new Exception("Пользователь не найден.");
         } 
 
         buyer.FirstName = buyerUpdt.FirstName;
         buyer.LastName = buyerUpdt.LastName;
-        buyer.Email = buyerUpdt.Email;
         buyer.DateOfBirth = buyerUpdt.DateOfBirth;
         buyer.Sex = buyerUpdt.Sex;
         buyer.PhoneNumber = buyerUpdt.PhoneNumber;
@@ -49,7 +48,7 @@ public class SqlBuyersDAO : IBuyersDAO
     public async Task DeleteBuyer(Guid id){
         var buyer = await _context.Buyers.FindAsync(id);
         if(buyer == null){
-            throw new Exception("User not found.");
+            throw new Exception("Пользователь не найден.");
         }
 
         _context.Buyers.Remove(buyer);

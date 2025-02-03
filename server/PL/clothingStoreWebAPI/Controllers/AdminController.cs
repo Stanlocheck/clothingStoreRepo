@@ -22,15 +22,14 @@ namespace clothingStoreWebAPI.Controllers
         
 
         /// <summary>
-        /// Изменяет информацию о модераторе по его идентификатору.
+        /// Изменяет информацию авторизованного модератора.
         /// </summary>
-        /// <param name="id">Идентификатор модератора.</param>
         /// <param name="updtAdmin">Схема модератора.</param>
         /// <returns>Информация о модераторе.</returns>
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateAdmin(AdminAddDTO updtAdmin, Guid id){
+        [HttpPut]
+        public async Task<ActionResult> UpdateAdmin(AdminUpdateDTO updtAdmin){
             try{
-                await _adminBLL.UpdateAdmin(updtAdmin, id);
+                await _adminBLL.UpdateAdmin(updtAdmin);
                 return Ok(updtAdmin);
             }
             catch(Exception ex){
