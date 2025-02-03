@@ -61,7 +61,7 @@ namespace clothingStoreWebAPI.Controllers
         /// <param name="updtBuyer">Схема пользователя.</param>
         /// <returns>Информация о пользователе.</returns>
         [HttpPut]
-        public async Task<ActionResult> UpdateBuyer(BuyerAddDTO updtBuyer){
+        public async Task<ActionResult> UpdateBuyer(BuyerUpdateDTO updtBuyer){
             try{
                 await _buyerBLL.UpdateBuyer(updtBuyer);
                 return Ok(updtBuyer);

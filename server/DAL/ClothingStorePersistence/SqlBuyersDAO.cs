@@ -36,7 +36,6 @@ public class SqlBuyersDAO : IBuyersDAO
 
         buyer.FirstName = buyerUpdt.FirstName;
         buyer.LastName = buyerUpdt.LastName;
-        buyer.Email = buyerUpdt.Email;
         buyer.DateOfBirth = buyerUpdt.DateOfBirth;
         buyer.Sex = buyerUpdt.Sex;
         buyer.PhoneNumber = buyerUpdt.PhoneNumber;

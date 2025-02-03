@@ -5,5 +5,5 @@ namespace ClothesInterfacesBLL;
 
 public interface IAdminsBLL
 {
-    public Task UpdateAdmin(AdminAddDTO admin);   
+    public Task UpdateAdmin(AdminUpdateDTO admin);   
 }

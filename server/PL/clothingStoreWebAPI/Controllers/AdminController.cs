@@ -27,7 +27,7 @@ namespace clothingStoreWebAPI.Controllers
         /// <param name="updtAdmin">Схема модератора.</param>
         /// <returns>Информация о модераторе.</returns>
         [HttpPut]
-        public async Task<ActionResult> UpdateAdmin(AdminAddDTO updtAdmin){
+        public async Task<ActionResult> UpdateAdmin(AdminUpdateDTO updtAdmin){
             try{
                 await _adminBLL.UpdateAdmin(updtAdmin);
                 return Ok(updtAdmin);

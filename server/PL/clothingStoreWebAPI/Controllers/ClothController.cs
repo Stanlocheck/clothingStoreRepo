@@ -162,7 +162,7 @@ namespace clothingStoreWebAPI.Controllers
 
 
         /// <summary>
-        /// Добавляет продукт в корзину.
+        /// Добавляет продукт в корзину авторизованного пользователя.
         /// </summary>
         /// <param name="clothId">Идентификатор продукта.</param>
         /// <returns>Информация о продукте.</returns>

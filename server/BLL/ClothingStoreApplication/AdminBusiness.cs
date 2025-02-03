@@ -14,6 +14,7 @@ public class AdminBusiness : IAdminsBLL
     private readonly IAdminsDAO _adminsDAO;
     private Mapper _adminDTO;
     private Mapper _adminAddDTO;
+    private Mapper _adminUpdateDTO;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     public AdminBusiness(IAdminsDAO adminsDAO, IHttpContextAccessor httpContextAccessor){
@@ -25,6 +26,9 @@ public class AdminBusiness : IAdminsBLL
 
         var _adminAddDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Admin, AdminAddDTO>().ReverseMap());
         _adminAddDTO = new Mapper(_adminAddDtoMapping);
+
+        var _adminUpdateDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Admin, AdminUpdateDTO>().ReverseMap());
+        _adminUpdateDTO = new Mapper(_adminUpdateDtoMapping);
     }
 
     private Guid GetLoggedInBuyerId(){
@@ -42,11 +46,11 @@ public class AdminBusiness : IAdminsBLL
         return adminId;
     }
 
-    public async Task UpdateAdmin(AdminAddDTO admin){
+    public async Task UpdateAdmin(AdminUpdateDTO admin){
         try{
             var adminId = GetLoggedInBuyerId();
 
-            var adminUpdateDTO = _adminAddDTO.Map<AdminAddDTO, Admin>(admin);
+            var adminUpdateDTO = _adminUpdateDTO.Map<AdminUpdateDTO, Admin>(admin);
             await _adminsDAO.UpdateAdmin(adminUpdateDTO, adminId);
         }
         catch(Exception ex){

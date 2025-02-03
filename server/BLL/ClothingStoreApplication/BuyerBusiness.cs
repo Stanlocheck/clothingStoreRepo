@@ -14,6 +14,7 @@ public class BuyerBusiness : IBuyersBLL
     private readonly IBuyersDAO _buyersDAO;
     private Mapper _buyerDTO;
     private Mapper _buyerAddDTO;
+    private Mapper _buyerUpdateDTO;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     public BuyerBusiness(IBuyersDAO buyersDAO, IHttpContextAccessor httpContextAccessor){
@@ -25,6 +26,9 @@ public class BuyerBusiness : IBuyersBLL
 
         var _buyerAddDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Buyer, BuyerAddDTO>().ReverseMap());
         _buyerAddDTO = new Mapper(_buyerAddDtoMapping);
+
+        var _buyerUpdateDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Buyer, BuyerUpdateDTO>().ReverseMap());
+        _buyerUpdateDTO = new Mapper(_buyerUpdateDtoMapping);
     }
 
     private Guid GetLoggedInBuyerId(){
@@ -62,13 +66,13 @@ public class BuyerBusiness : IBuyersBLL
         }
     }
 
-    public async Task UpdateBuyer(BuyerAddDTO buyerInfo){
+    public async Task UpdateBuyer(BuyerUpdateDTO buyerInfo){
         try{
-            var buyer = new BuyerAddDTO {
+            var buyerId = GetLoggedInBuyerId();
+
+            var buyer = new BuyerUpdateDTO {
                 FirstName = buyerInfo.FirstName,
                 LastName = buyerInfo.LastName,
-                Email = buyerInfo.Email,
-                Password = buyerInfo.Password,
                 DateOfBirth = buyerInfo.DateOfBirth,
                 Sex = buyerInfo.Sex.ToUpper(),
                 PhoneNumber = buyerInfo.PhoneNumber,
@@ -76,10 +80,8 @@ public class BuyerBusiness : IBuyersBLL
                 StreetAddress = buyerInfo.StreetAddress,
                 ApartmentNumber = buyerInfo.ApartmentNumber
             };
-            var buyerId = GetLoggedInBuyerId();
-
             Enum.Parse<Gender>(buyer.Sex);
-            var buyerUpdateDTO = _buyerAddDTO.Map<BuyerAddDTO, Buyer>(buyer);
+            var buyerUpdateDTO = _buyerUpdateDTO.Map<BuyerUpdateDTO, Buyer>(buyer);
             await _buyersDAO.UpdateBuyer(buyerUpdateDTO, buyerId);
         }
         catch(ArgumentException){
