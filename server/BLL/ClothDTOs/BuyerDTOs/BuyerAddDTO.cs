@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace ClothDTOs;
 
 public class BuyerAddDTO
@@ -11,5 +13,5 @@ public class BuyerAddDTO
     public string PhoneNumber { get; set; }
     public string City { get; set; }
     public string StreetAddress { get; set; }
-    public int? ApartmentNumber { get; set; }
+    public int ApartmentNumber { get; set; }
 }

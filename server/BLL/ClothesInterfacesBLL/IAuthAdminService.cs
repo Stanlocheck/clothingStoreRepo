@@ -10,4 +10,5 @@ public interface IAuthAdminService
     Task Logout();  
     public bool IsPasswordValid(string password);
     public bool IsEmailValid(string email);
+    public bool IsPhoneNumberValid(string phoneNumber);
 }

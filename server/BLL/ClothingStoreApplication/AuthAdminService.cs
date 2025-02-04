@@ -47,17 +47,24 @@ public class AuthAdminService : IAuthAdminService
             throw new Exception("Неверный формат пароля. Пароль должен содержать минимум 8 символов, 1 заглавную букву и 1 цифру.");
         }
 
-        var admin = new AdminAddDTO {
+        if(!IsPhoneNumberValid(adminInfo.PhoneNumber)){
+            throw new Exception("Неверный формат номера телефона.");
+        }
+
+        var admin = new AdminDTO {
+            Id = Guid.NewGuid(),
             FirstName = adminInfo.FirstName,
             LastName = adminInfo.LastName,
             Email = adminInfo.Email,
+            DateOfReg = DateTime.UtcNow,
             DateOfBirth = adminInfo.DateOfBirth,
             Password = BCrypt.Net.BCrypt.HashPassword(adminInfo.Password),
             PhoneNumber = adminInfo.PhoneNumber,
+            Role = "Admin"
         };
 
         try{
-            var adminAddDTO = _adminAddDTO.Map<AdminAddDTO, Admin>(admin);
+            var adminAddDTO = _adminDTO.Map<AdminDTO, Admin>(admin);
             await _adminsDAO.AddAdmin(adminAddDTO);
         }
         catch(Exception ex){
@@ -99,5 +106,9 @@ public class AuthAdminService : IAuthAdminService
     public bool IsEmailValid(string email){
         var regex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
         return regex.IsMatch(email);
+    }
+    public bool IsPhoneNumberValid(string phoneNumber){
+        var regex = new Regex(@"^(?:\+7|8)?[\s\-]?\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}$");
+        return regex.IsMatch(phoneNumber);
     }
 }
