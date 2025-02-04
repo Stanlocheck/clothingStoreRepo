@@ -10,6 +10,7 @@ using ClothDomain;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Text.RegularExpressions;
+using System.Text.Json.Serialization;
 
 namespace ClothingStoreApplication;
 
@@ -46,22 +47,29 @@ public class AuthService : IAuthService
             throw new Exception("Неверный формат пароля. Пароль должен содержать минимум 8 символов, 1 заглавную букву и 1 цифру.");
         }
 
-        var buyer = new BuyerAddDTO {
+        if(!IsPhoneNumberValid(buyerInfo.PhoneNumber)){
+            throw new Exception("Неверный формат номера телефона.");
+        }
+
+        var buyer = new BuyerDTO {
+            Id = Guid.NewGuid(),
             FirstName = buyerInfo.FirstName,
             LastName = buyerInfo.LastName,
             Email = buyerInfo.Email,
             Password = BCrypt.Net.BCrypt.HashPassword(buyerInfo.Password),
+            DateOfReg = DateTime.UtcNow,
             DateOfBirth = buyerInfo.DateOfBirth,
             Sex = buyerInfo.Sex.ToUpper(),
             PhoneNumber = buyerInfo.PhoneNumber,
             City = buyerInfo.City,
             StreetAddress = buyerInfo.StreetAddress,
             ApartmentNumber = buyerInfo.ApartmentNumber,
+            Role = "Buyer"
         };
 
         try{
             Enum.Parse<Gender>(buyer.Sex);
-            var buyerAddDTO = _buyerAddDTO.Map<BuyerAddDTO, Buyer>(buyer);
+            var buyerAddDTO = _buyerDTO.Map<BuyerDTO, Buyer>(buyer);
             await _buyersDAO.AddBuyer(buyerAddDTO);
         }
         catch(ArgumentException){
@@ -106,5 +114,9 @@ public class AuthService : IAuthService
     public bool IsEmailValid(string email){
         var regex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
         return regex.IsMatch(email);
+    }
+    public bool IsPhoneNumberValid(string phoneNumber){
+        var regex = new Regex(@"^(?:\+7|8)?[\s\-]?\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}$");
+        return regex.IsMatch(phoneNumber);
     }
 }
