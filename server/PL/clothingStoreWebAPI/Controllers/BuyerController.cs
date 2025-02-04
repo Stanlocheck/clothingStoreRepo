@@ -60,6 +60,7 @@ namespace clothingStoreWebAPI.Controllers
         /// </summary>
         /// <param name="updtBuyer">Схема пользователя.</param>
         /// <returns>Информация о пользователе.</returns>
+        [Authorize(Policy = "BuyerOnly")]
         [HttpPut]
         public async Task<ActionResult> UpdateBuyer(BuyerUpdateDTO updtBuyer){
             try{

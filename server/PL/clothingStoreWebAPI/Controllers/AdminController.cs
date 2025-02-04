@@ -26,6 +26,7 @@ namespace clothingStoreWebAPI.Controllers
         /// </summary>
         /// <param name="updtAdmin">Схема модератора.</param>
         /// <returns>Информация о модераторе.</returns>
+        [Authorize(Policy = "AdminOnly")]
         [HttpPut]
         public async Task<ActionResult> UpdateAdmin(AdminUpdateDTO updtAdmin){
             try{
