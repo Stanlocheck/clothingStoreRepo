@@ -10,6 +10,6 @@ public class ClothAddDTO
     public string Season { get; set; }
     public int Size { get; set; }
     public string Material { get; set; }
-    public string Manufacturer { get; set; }
+    public string CountryOfOrigin { get; set; }
     public string Sex { get; set; }
 }

@@ -51,19 +51,18 @@ public class AuthAdminService : IAuthAdminService
             throw new Exception("Неверный формат номера телефона.");
         }
 
-        var admin = new AdminDTO {
-            Id = Guid.NewGuid(),
-            FirstName = adminInfo.FirstName,
-            LastName = adminInfo.LastName,
-            Email = adminInfo.Email,
-            DateOfReg = DateTime.UtcNow,
-            DateOfBirth = adminInfo.DateOfBirth,
-            Password = BCrypt.Net.BCrypt.HashPassword(adminInfo.Password),
-            PhoneNumber = adminInfo.PhoneNumber,
-            Role = "Admin"
-        };
-
         try{
+            var admin = new AdminDTO {
+                Id = Guid.NewGuid(),
+                FirstName = adminInfo.FirstName,
+                LastName = adminInfo.LastName,
+                Email = adminInfo.Email,
+                DateOfReg = DateTime.UtcNow,
+                DateOfBirth = adminInfo.DateOfBirth,
+                Password = BCrypt.Net.BCrypt.HashPassword(adminInfo.Password),
+                PhoneNumber = adminInfo.PhoneNumber,
+                Role = "Admin"
+            };
             var adminAddDTO = _adminDTO.Map<AdminDTO, Admin>(admin);
             await _adminsDAO.AddAdmin(adminAddDTO);
         }
@@ -99,15 +98,15 @@ public class AuthAdminService : IAuthAdminService
         await _httpContextAccessor.HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
     }
 
-    public bool IsPasswordValid(string password){
+    private bool IsPasswordValid(string password){
         var regex = new Regex(@"^(?=.*[A-Z])(?=.*\d).{8,}$");
         return regex.IsMatch(password);
     }
-    public bool IsEmailValid(string email){
+    private bool IsEmailValid(string email){
         var regex = new Regex(@"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$");
         return regex.IsMatch(email);
     }
-    public bool IsPhoneNumberValid(string phoneNumber){
+    private bool IsPhoneNumberValid(string phoneNumber){
         var regex = new Regex(@"^(?:\+7|8)?[\s\-]?\(?\d{3}\)?[\s\-]?\d{3}[\s\-]?\d{2}[\s\-]?\d{2}$");
         return regex.IsMatch(phoneNumber);
     }

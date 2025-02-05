@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClothingStorePersistence;
 
-public class SqlDAO : IClothesDAO, ICartDAO
+public class SqlDAO : IClothesDAO, ICartDAO, IWishlistDAO
 {
     private readonly ApplicationDbContext _context;
 
@@ -36,7 +36,7 @@ public class SqlDAO : IClothesDAO, ICartDAO
 
         cloth.Price = clothUpdt.Price;
         cloth.Size = clothUpdt.Size;
-        cloth.Manufacturer = clothUpdt.Manufacturer;
+        cloth.CountryOfOrigin = clothUpdt.CountryOfOrigin;
         cloth.Brand = clothUpdt.Brand;
         cloth.Material = clothUpdt.Material;
         cloth.Season = clothUpdt.Season;
@@ -63,15 +63,7 @@ public class SqlDAO : IClothesDAO, ICartDAO
         return await _context.Clothes.Where(w => w.Sex == (Gender)1).ToListAsync();
     }
 
-    /*public async Task<List<Cloth>> FilterBySex(Gender gender){
-        if(gender != (Gender)0 || gender != (Gender)1){
-            throw new Exception("Неверно указан пол.");
-        }
-
-        return await _context.Clothes.Where(f => f.Sex == gender).ToListAsync();
-    }*/
-
-    public async Task AddCartItem(Guid buyerId, Guid clothId){
+    public async Task AddToCart(Guid buyerId, Guid clothId){
         var cart = await _context.Carts.Include(c => c.Items).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
         if(cart == null){
             cart = new Cart { BuyerId = buyerId };
@@ -98,13 +90,13 @@ public class SqlDAO : IClothesDAO, ICartDAO
         return cart.Items.ToList();
     }
 
-    public async Task AddAmount(Guid buyerId, Guid clothId){
+    public async Task AddAmountOfCartItem(Guid buyerId, Guid cartId){
         var cart = await _context.Carts.Include(c => c.Items).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
         if(cart == null){
             throw new Exception("Корзина не найдена.");
         }
 
-        var existingItem = cart.Items.FirstOrDefault(ci => ci.ClothId == clothId);
+        var existingItem = cart.Items.FirstOrDefault(ci => ci.CartId == cartId);
         if(existingItem == null){
             throw new Exception("Продукт не найден.");
         }
@@ -115,13 +107,13 @@ public class SqlDAO : IClothesDAO, ICartDAO
         await _context.SaveChangesAsync();
     }
 
-    public async Task ReduceAmount(Guid buyerId, Guid clothId){
+    public async Task ReduceAmountOfCartItem(Guid buyerId, Guid cartId){
         var cart = await _context.Carts.Include(c => c.Items).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
         if(cart == null){
             throw new Exception("Корзина не найдена.");
         }
 
-        var existingItem = cart.Items.FirstOrDefault(ci => ci.ClothId == clothId);
+        var existingItem = cart.Items.FirstOrDefault(ci => ci.CartId == cartId);
         if(existingItem == null){
             throw new Exception("Продукт не найден.");
         }
@@ -130,9 +122,82 @@ public class SqlDAO : IClothesDAO, ICartDAO
         }
 
         if(existingItem.Amount == 0){
-            _context.Remove(existingItem);
+            _context.CartItems.Remove(existingItem);
         }
 
         await _context.SaveChangesAsync();
     }
+
+    public async Task DeleteCartItem(Guid buyerId, Guid cartId){
+        var cart = await _context.Carts.Include(c => c.Items).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
+        if(cart == null){
+            throw new Exception("Корзина не найдена");
+        }
+
+        var existingItem = cart.Items.FirstOrDefault(ci => ci.CartId == cartId);
+        if(existingItem == null){
+            throw new Exception("Продукт не найден.");
+        }
+        else{
+            _context.CartItems.Remove(existingItem);
+        }
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task AddToWishlist(Guid buyerId, Guid clothId){
+        var wishlist = await _context.Wishlists.Include(c => c.Items).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
+        if(wishlist == null){
+            wishlist = new Wishlist { BuyerId = buyerId };
+            await _context.Wishlists.AddAsync(wishlist);
+        }
+
+        var existingItem = wishlist.Items.FirstOrDefault(ci => ci.ClothId == clothId);
+        if(existingItem != null){
+            throw new Exception("Продукт уже в вишлисте.");
+        }
+        
+        wishlist.Items.Add(new WishlistItem { ClothId = clothId });
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<WishlistItem>> GetWishlistItems(Guid buyerId){
+        var wishlist = await _context.Wishlists.Include(c => c.Items).ThenInclude(ci => ci.Cloth).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
+        if(wishlist == null){
+            throw new Exception("Вишлист не найден.");
+        }
+
+        return wishlist.Items.ToList();
+    }
+
+    public async Task FromWishlistToCart(Guid buyerId, Guid wishlistId){
+        var wishlist = await _context.Wishlists.Include(c => c.Items).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
+        if(wishlist == null){
+            throw new Exception("Вишлист не найден.");
+        }
+
+        var existingWishlistItem = wishlist.Items.FirstOrDefault(ci => ci.WishlistId == wishlistId);
+        if(existingWishlistItem == null){
+            throw new Exception("Продукт не найден.");
+        }
+        
+        await AddToCart(buyerId, existingWishlistItem.ClothId);
+        _context.WishlistItems.Remove(existingWishlistItem);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task DeleteWishlistItem(Guid buyerId, Guid wishlistId){
+        var wishlist = await _context.Wishlists.Include(c => c.Items).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
+        if(wishlist == null){
+            throw new Exception("Вишлист не найден");
+        }
+
+        var existingItem = wishlist.Items.FirstOrDefault(ci => ci.WishlistId == wishlistId);
+        if(existingItem == null){
+            throw new Exception("Продукт не найден.");
+        }
+
+        _context.WishlistItems.Remove(existingItem);
+        await _context.SaveChangesAsync();
+    } 
 }
