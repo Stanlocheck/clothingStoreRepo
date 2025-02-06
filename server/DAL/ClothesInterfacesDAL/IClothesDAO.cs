@@ -11,6 +11,4 @@ public interface IClothesDAO
     public Task DeleteCloth(Guid id);
     public Task<List<Cloth>> GetMensClothing();
     public Task<List<Cloth>> GetWomensClothing();
-    public Task AddToCart(Guid buyerId, Guid clothId);
-    public Task AddToWishlist(Guid buyerId, Guid clothId);
 }

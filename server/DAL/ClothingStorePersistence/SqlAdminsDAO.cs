@@ -25,10 +25,17 @@ public class SqlAdminsDAO : IAdminsDAO
         return admin;
     }
 
+    public async Task<Admin?> GetByEmail(string email){
+        var admin = await _dbContext.Admins.FirstOrDefaultAsync(_admin => _admin.Email == email);
+
+        return admin;
+    }
+
     public async Task AddAdmin(Admin admin){
         await _dbContext.Admins.AddAsync(admin);
         await _dbContext.SaveChangesAsync();
     }
+
     public async Task UpdateAdmin(Admin adminUpdt, Guid id){
         var admin = await _dbContext.Admins.FindAsync(id);  
         if(admin == null){
@@ -42,6 +49,7 @@ public class SqlAdminsDAO : IAdminsDAO
 
         await _dbContext.SaveChangesAsync();
     }
+
     public async Task DeleteAdmin(Guid id){
         var admin = await _dbContext.Admins.FindAsync(id);
         if(admin == null){

@@ -47,10 +47,10 @@ public class WishlistBusiness : IWishlistBLL
         return buyerId;
     }
 
-    public async Task<List<WishlistItemDTO>> GetWishlistItems(){
+    public async Task<List<WishlistItemDTO>> GetAllWishlistItems(){
         try{
             var buyerId = GetLoggedInBuyerId();
-            var wishlist = await _wishlistDAO.GetWishlistItems(buyerId);
+            var wishlist = await _wishlistDAO.GetAllWishlistItems(buyerId);
             return _wishlistItemDTO.Map<List<WishlistItemDTO>>(wishlist);
         }
         catch(Exception ex){
@@ -58,20 +58,30 @@ public class WishlistBusiness : IWishlistBLL
         }
     }
 
-    public async Task FromWishlistToCart(Guid wishlistId){
+    public async Task AddToWishlist(Guid clothId){
         try{
             var buyerId = GetLoggedInBuyerId();
-            await _wishlistDAO.FromWishlistToCart(buyerId, wishlistId);
+            await _wishlistDAO.AddToWishlist(buyerId, clothId);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
     }
 
-    public async Task DeleteWishlistItem(Guid wishlistId){
+    public async Task FromWishlistToCart(Guid wishlistItemId){
         try{
             var buyerId = GetLoggedInBuyerId();
-            await _wishlistDAO.FromWishlistToCart(buyerId, wishlistId);
+            await _wishlistDAO.FromWishlistToCart(buyerId, wishlistItemId);
+        }
+        catch(Exception ex){
+            throw new Exception(ex.Message);
+        }
+    }
+
+    public async Task DeleteWishlistItem(Guid wishlistItemId){
+        try{
+            var buyerId = GetLoggedInBuyerId();
+            await _wishlistDAO.FromWishlistToCart(buyerId, wishlistItemId);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);

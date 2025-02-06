@@ -7,4 +7,5 @@ public class WishlistItem
     public Cloth Cloth { get; set; }
     public Guid WishlistId { get; set; }
     public Wishlist Wishlist { get; set; }
+    public int Price { get; set; }
 }

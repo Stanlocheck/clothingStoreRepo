@@ -11,14 +11,14 @@ namespace ClothingStoreApplication;
 public class CartBusiness : ICartBLL
 {
     private readonly ICartDAO _cartDAO;
-    private Mapper _cartItemDTO;
+    private Mapper _cartDTO;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     public CartBusiness(ICartDAO cartDAO, IHttpContextAccessor httpContextAccessor){
         _cartDAO = cartDAO;
         _httpContextAccessor = httpContextAccessor;
 
-        var _cartItemDtoMapping = new MapperConfiguration(cfg => {
+        var _cartDtoMapping = new MapperConfiguration(cfg => {
             cfg.CreateMap<CartItem, CartItemDTO>()
                 .ForMember(dest => dest.Cloth, opt => opt.MapFrom(src => src.Cloth))
                 .ForMember(dest => dest.Cart, opt => opt.MapFrom(src => src.Cart));
@@ -28,7 +28,7 @@ public class CartBusiness : ICartBLL
             cfg.CreateMap<Buyer, BuyerDTO>();
             cfg.CreateMap<Cloth, ClothDTO>();
         });
-        _cartItemDTO = new Mapper(_cartItemDtoMapping);
+        _cartDTO = new Mapper(_cartDtoMapping);
     }
     private Guid GetLoggedInBuyerId(){
         var httpContext = _httpContextAccessor.HttpContext;
@@ -45,41 +45,61 @@ public class CartBusiness : ICartBLL
         return buyerId;
     }
 
-    public async Task<List<CartItemDTO>> GetCartItems(){
+    public async Task<CartDTO> GetCart(){
         try{
             var buyerId = GetLoggedInBuyerId();
-            var cart = await _cartDAO.GetCartItems(buyerId);
-            return _cartItemDTO.Map<List<CartItemDTO>>(cart);
+            var cart = await _cartDAO.GetCart(buyerId);
+            return _cartDTO.Map<Cart, CartDTO>(cart);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
     }
 
-    public async Task AddAmountOfCartItem(Guid cartId){
+    public async Task AddToCart(Guid clothId){
         try{
             var buyerId = GetLoggedInBuyerId();
-            await _cartDAO.AddAmountOfCartItem(buyerId, cartId);
+            await _cartDAO.AddToCart(buyerId, clothId);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
     }
 
-    public async Task ReduceAmountOfCartItem(Guid cartId){
+    public async Task AddAmountOfCartItem(Guid cartItemId){
         try{
             var buyerId = GetLoggedInBuyerId();
-            await _cartDAO.ReduceAmountOfCartItem(buyerId, cartId);
+            await _cartDAO.AddAmountOfCartItem(buyerId, cartItemId);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
     }
 
-    public async Task DeleteCartItem(Guid cartId){
+    public async Task ReduceAmountOfCartItem(Guid cartItemId){
         try{
             var buyerId = GetLoggedInBuyerId();
-            await _cartDAO.DeleteCartItem(buyerId, cartId);
+            await _cartDAO.ReduceAmountOfCartItem(buyerId, cartItemId);
+        }
+        catch(Exception ex){
+            throw new Exception(ex.Message);
+        }
+    }
+
+    public async Task DeleteCartItem(Guid cartItemId){
+        try{
+            var buyerId = GetLoggedInBuyerId();
+            await _cartDAO.DeleteCartItem(buyerId, cartItemId);
+        }
+        catch(Exception ex){
+            throw new Exception(ex.Message);
+        }
+    }
+
+    public async Task SelectCartItem(Guid cartItemId){
+        try{
+            var buyerId = GetLoggedInBuyerId();
+            await _cartDAO.SelectCartItem(buyerId, cartItemId);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);

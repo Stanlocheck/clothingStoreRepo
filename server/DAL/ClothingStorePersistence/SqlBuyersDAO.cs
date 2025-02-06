@@ -15,6 +15,7 @@ public class SqlBuyersDAO : IBuyersDAO
     public async Task<List<Buyer>> GetAll(){
         return await _context.Buyers.ToListAsync();
     }
+
     public async Task<Buyer> GetById(Guid id){
         var buyer = await _context.Buyers.FirstOrDefaultAsync(_buyer => _buyer.Id == id);
         if(buyer == null){
@@ -23,10 +24,18 @@ public class SqlBuyersDAO : IBuyersDAO
 
         return buyer;
     }
+
+    public async Task<Buyer?> GetByEmail(string email){
+        var buyer = await _context.Buyers.FirstOrDefaultAsync(_buyer => _buyer.Email == email);
+
+        return buyer;
+    }
+
     public async Task AddBuyer(Buyer buyer){
         await _context.Buyers.AddAsync(buyer);
         await _context.SaveChangesAsync();
     }
+
     public async Task UpdateBuyer(Buyer buyerUpdt, Guid id){
         var buyer = await _context.Buyers.FindAsync(id);  
         if(buyer == null){
@@ -44,6 +53,7 @@ public class SqlBuyersDAO : IBuyersDAO
 
         await _context.SaveChangesAsync();
     }
+
     public async Task DeleteBuyer(Guid id){
         var buyer = await _context.Buyers.FindAsync(id);
         if(buyer == null){

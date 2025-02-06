@@ -15,6 +15,7 @@ public class SqlDAO : IClothesDAO
     public async Task<List<Cloth>> GetAll(){
         return await _context.Clothes.ToListAsync();
     }
+
     public async Task<Cloth> GetById(Guid id){
         var cloth = await _context.Clothes.FirstOrDefaultAsync(_cloth => _cloth.Id == id);
         if(cloth == null){
@@ -23,10 +24,12 @@ public class SqlDAO : IClothesDAO
 
         return cloth;
     }
+
     public async Task AddCloth(Cloth cloth){
         await _context.Clothes.AddAsync(cloth);
         await _context.SaveChangesAsync();
     }
+
     public async Task UpdateCloth(Cloth clothUpdt, Guid id){
         var cloth = await _context.Clothes.FindAsync(id);  
         if(cloth == null){
@@ -44,6 +47,7 @@ public class SqlDAO : IClothesDAO
 
         await _context.SaveChangesAsync();
     }
+    
     public async Task DeleteCloth(Guid id){
         var cloth = await _context.Clothes.FindAsync(id);
         if(cloth == null){
@@ -60,39 +64,5 @@ public class SqlDAO : IClothesDAO
 
     public async Task<List<Cloth>> GetWomensClothing(){
         return await _context.Clothes.Where(w => w.Sex == (Gender)1).ToListAsync();
-    }
-
-    public async Task AddToCart(Guid buyerId, Guid clothId){
-        var cart = await _context.Carts.Include(c => c.Items).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
-        if(cart == null){
-            cart = new Cart { BuyerId = buyerId };
-            await _context.Carts.AddAsync(cart);
-        }
-
-        var existingItem = cart.Items.FirstOrDefault(ci => ci.ClothId == clothId);
-        if(existingItem != null){
-            existingItem.Amount++;
-        }
-        else {
-            cart.Items.Add(new CartItem {ClothId = clothId, Amount = 1});
-        }
-
-        await _context.SaveChangesAsync();
-    }
-
-    public async Task AddToWishlist(Guid buyerId, Guid clothId){
-        var wishlist = await _context.Wishlists.Include(c => c.Items).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
-        if(wishlist == null){
-            wishlist = new Wishlist { BuyerId = buyerId };
-            await _context.Wishlists.AddAsync(wishlist);
-        }
-
-        var existingItem = wishlist.Items.FirstOrDefault(ci => ci.ClothId == clothId);
-        if(existingItem != null){
-            throw new Exception("Продукт уже в вишлисте.");
-        }
-        
-        wishlist.Items.Add(new WishlistItem { ClothId = clothId });
-        await _context.SaveChangesAsync();
     }
 }

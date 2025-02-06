@@ -16,13 +16,11 @@ namespace ClothingStoreApplication;
 public class AuthAdminService : IAuthAdminService
 {
     private readonly IAdminsDAO _adminsDAO;
-    private readonly ApplicationDbContext _context;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private Mapper _adminDTO;
 
-    public AuthAdminService(IAdminsDAO adminsDAO, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor){
+    public AuthAdminService(IAdminsDAO adminsDAO, IHttpContextAccessor httpContextAccessor){
         _adminsDAO = adminsDAO;
-        _context = context;
         _httpContextAccessor = httpContextAccessor;
 
         var _adminDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Admin, AdminDTO>().ReverseMap());
@@ -30,7 +28,8 @@ public class AuthAdminService : IAuthAdminService
     }
 
     public async Task Register(AdminAddDTO adminInfo){
-        if(await _context.Admins.AnyAsync(a => a.Email == adminInfo.Email)){
+        var checkEmail = await _adminsDAO.GetByEmail(adminInfo.Email);
+        if(checkEmail != null){
             throw new Exception("Пользователь с таким Email уже существует.");
         }
 
@@ -68,7 +67,7 @@ public class AuthAdminService : IAuthAdminService
     }
 
     public async Task Login(string email, string password){
-        var admin = await _context.Admins.FirstOrDefaultAsync(a => a.Email == email);
+        var admin = await _adminsDAO.GetByEmail(email);
         if (admin == null || !BCrypt.Net.BCrypt.Verify(password, admin.Password))
         {
             throw new Exception("Неверный Email или пароль.");

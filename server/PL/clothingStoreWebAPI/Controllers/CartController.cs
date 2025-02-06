@@ -19,15 +19,33 @@ namespace clothingStoreWebAPI.Controllers
             _cartItemBLL = cartItemBLL;
         }
 
+
         /// <summary>
         /// Получает информацию о продуктах в корзине авторизованного пользователя.
         /// </summary>
         /// <returns>Информация о продуктах.</returns>
         [HttpGet]
-        public async Task<ActionResult<List<CartItemDTO>>> GetCartItems(){
+        public async Task<ActionResult<CartDTO>> GetCart(){
             try{
-                var cart = await _cartItemBLL.GetCartItems();
+                var cart = await _cartItemBLL.GetCart();
                 return Ok(cart);
+            }
+            catch(Exception ex){
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// Добавляет продукт в корзину авторизованного пользователя.
+        /// </summary>
+        /// <param name="clothId">Идентификатор продукта.</param>
+        /// <returns>Информация о продукте.</returns>
+        [HttpPost]
+        public async Task<ActionResult> AddToCart(Guid clothId){
+            try{
+                await _cartItemBLL.AddToCart(clothId);
+                return Ok();
             }
             catch(Exception ex){
                 return BadRequest(ex.Message);
@@ -38,13 +56,13 @@ namespace clothingStoreWebAPI.Controllers
         /// <summary>
         /// Изменяет количество продукта в корзине на +1.
         /// </summary>
-        /// <param name="cartId">Идентификатор продукта в корзине.</param>
+        /// <param name="cartItemId">Идентификатор продукта в корзине.</param>
         /// <returns>Информация о продукте.</returns>
         [HttpPut]
         [Route("addAmountOfCartItem")]
-        public async Task<ActionResult> AddAmountOfCartItem(Guid cartId){
+        public async Task<ActionResult> AddAmountOfCartItem(Guid cartItemId){
             try{
-                await _cartItemBLL.AddAmountOfCartItem(cartId);
+                await _cartItemBLL.AddAmountOfCartItem(cartItemId);
                 return Ok();
             }
             catch(Exception ex){
@@ -56,13 +74,13 @@ namespace clothingStoreWebAPI.Controllers
         /// <summary>
         /// Изменяет количество продукта в корзине на -1.
         /// </summary>
-        /// <param name="cartId">Идентификатор продукта в корзине.</param>
+        /// <param name="cartItemId">Идентификатор продукта в корзине.</param>
         /// <returns>Информация о продукте.</returns>
         [HttpPut]
         [Route("reduceAmountOfCartItem")]
-        public async Task<ActionResult> ReduceAmountOfCartItem(Guid cartId){
+        public async Task<ActionResult> ReduceAmountOfCartItem(Guid cartItemId){
             try{
-                await _cartItemBLL.ReduceAmountOfCartItem(cartId);
+                await _cartItemBLL.ReduceAmountOfCartItem(cartItemId);
                 return Ok(); 
             }
             catch(Exception ex){
@@ -73,13 +91,30 @@ namespace clothingStoreWebAPI.Controllers
         /// <summary>
         /// Удаляет продукт из корзины.
         /// </summary>
-        /// <param name="cartId">Идентификатор продукта в корзине.</param>
+        /// <param name="cartItemId">Идентификатор продукта в корзине.</param>
         /// <returns>Информация о продукте.</returns>
-        [HttpDelete("{cartId}")]
-        public async Task<ActionResult> DeleteCartItem(Guid cartId){
+        [HttpDelete("{cartItemId}")]
+        public async Task<ActionResult> DeleteCartItem(Guid cartItemId){
             try{
-                await _cartItemBLL.DeleteCartItem(cartId);
+                await _cartItemBLL.DeleteCartItem(cartItemId);
                 return Ok(); 
+            }
+            catch(Exception ex){
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// Меняет статус продукта в корзине на выбран/не выбран для заказа.
+        /// </summary>
+        /// <param name="cartItemId">Идентификатор продукта в корзине.</param>
+        /// <returns>Информация о продукте.</returns>
+        [HttpPut("{cartItemId}")]
+        public async Task<ActionResult> SelectCartItem(Guid cartItemId){
+            try{
+                await _cartItemBLL.SelectCartItem(cartItemId);
+                return Ok();
             }
             catch(Exception ex){
                 return BadRequest(ex.Message);
