@@ -10,7 +10,6 @@ using ClothDomain;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Text.RegularExpressions;
-using System.Text.Json.Serialization;
 
 namespace ClothingStoreApplication;
 
@@ -20,7 +19,6 @@ public class AuthService : IAuthService
     private readonly ApplicationDbContext _context;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private Mapper _buyerDTO;
-    private Mapper _buyerAddDTO;
 
     public AuthService(IBuyersDAO buyersDAO, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor){
         _buyersDAO = buyersDAO;
@@ -29,9 +27,6 @@ public class AuthService : IAuthService
 
         var _buyerDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Buyer, BuyerDTO>().ReverseMap());
         _buyerDTO = new Mapper(_buyerDtoMapping);
-
-        var _buyerAddDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Buyer, BuyerAddDTO>().ReverseMap());
-        _buyerAddDTO = new Mapper(_buyerAddDtoMapping);
     }
 
     public async Task Register(BuyerAddDTO buyerInfo){

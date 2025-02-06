@@ -1,5 +1,3 @@
-using System;
-
 namespace ClothDomain;
 
 public class Cart

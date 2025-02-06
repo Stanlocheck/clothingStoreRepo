@@ -1,5 +1,3 @@
-using System;
-
 namespace clothingStoreWebAPI.Controllers;
 
 public class LoginModel

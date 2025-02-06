@@ -1,5 +1,3 @@
-using System;
-
 namespace ClothDTOs;
 
 public class ClothAddDTO

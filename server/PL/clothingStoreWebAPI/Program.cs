@@ -4,11 +4,6 @@ using Microsoft.OpenApi.Models;
 using ClothesInterfacesBLL;
 using ClothesInterfacesDAL;
 using ClothingStoreApplication;
-using ClothDomain;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using System.Text;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Security.Claims;
 using System.Reflection;
@@ -59,10 +54,12 @@ builder.Services.AddSwaggerGen(c =>
 
 builder.Services.AddScoped<IClothesDAO, SqlDAO>();
 builder.Services.AddScoped<IClothBLL, ClothBusiness>();
-builder.Services.AddScoped<ICartDAO, SqlDAO>();
-builder.Services.AddScoped<ICartBLL, ClothBusiness>();
-builder.Services.AddScoped<IWishlistDAO, SqlDAO>();
-builder.Services.AddScoped<IWishlistBLL, ClothBusiness>();
+
+builder.Services.AddScoped<ICartDAO, SqlCartDAO>();
+builder.Services.AddScoped<ICartBLL, CartBusiness>();
+
+builder.Services.AddScoped<IWishlistDAO, SqlWishlistDAO>();
+builder.Services.AddScoped<IWishlistBLL, WishlistBusiness>();
 
 builder.Services.AddScoped<IBuyersDAO, SqlBuyersDAO>();
 builder.Services.AddScoped<IBuyersBLL, BuyerBusiness>();
@@ -72,6 +69,7 @@ builder.Services.AddScoped<IAdminsBLL, AdminBusiness>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IAuthAdminService, AuthAdminService>();
+
 builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();

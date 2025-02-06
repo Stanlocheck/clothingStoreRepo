@@ -1,8 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using ClothDomain;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace ClothingStorePersistence;
 

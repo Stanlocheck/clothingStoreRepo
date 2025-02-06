@@ -1,4 +1,3 @@
-using System;
 using ClothesInterfacesBLL;
 using ClothesInterfacesDAL;
 using Microsoft.EntityFrameworkCore;
@@ -20,7 +19,6 @@ public class AuthAdminService : IAuthAdminService
     private readonly ApplicationDbContext _context;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private Mapper _adminDTO;
-    private Mapper _adminAddDTO;
 
     public AuthAdminService(IAdminsDAO adminsDAO, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor){
         _adminsDAO = adminsDAO;
@@ -29,9 +27,6 @@ public class AuthAdminService : IAuthAdminService
 
         var _adminDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Admin, AdminDTO>().ReverseMap());
         _adminDTO = new Mapper(_adminDtoMapping);
-
-        var _adminAddDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Admin, AdminAddDTO>().ReverseMap());
-        _adminAddDTO = new Mapper(_adminAddDtoMapping);
     }
 
     public async Task Register(AdminAddDTO adminInfo){

@@ -1,6 +1,3 @@
-using System;
-using ClothDomain;
-
 namespace ClothDTOs;
 
 public class CartDTO

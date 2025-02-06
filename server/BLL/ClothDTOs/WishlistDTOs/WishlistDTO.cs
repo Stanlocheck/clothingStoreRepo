@@ -1,5 +1,3 @@
-using System;
-
 namespace ClothDTOs.WishlistDTOs;
 
 public class WishlistDTO

@@ -1,4 +1,3 @@
-using System;
 using System.Security.Claims;
 using AutoMapper;
 using ClothDomain;
@@ -13,7 +12,6 @@ public class BuyerBusiness : IBuyersBLL
 {
     private readonly IBuyersDAO _buyersDAO;
     private Mapper _buyerDTO;
-    private Mapper _buyerAddDTO;
     private Mapper _buyerUpdateDTO;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
@@ -23,9 +21,6 @@ public class BuyerBusiness : IBuyersBLL
 
         var _buyerDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Buyer, BuyerDTO>().ReverseMap());
         _buyerDTO = new Mapper(_buyerDtoMapping);
-
-        var _buyerAddDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Buyer, BuyerAddDTO>().ReverseMap());
-        _buyerAddDTO = new Mapper(_buyerAddDtoMapping);
 
         var _buyerUpdateDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Buyer, BuyerUpdateDTO>().ReverseMap());
         _buyerUpdateDTO = new Mapper(_buyerUpdateDtoMapping);
