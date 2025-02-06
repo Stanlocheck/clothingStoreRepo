@@ -10,19 +10,18 @@ using ClothDomain;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Text.RegularExpressions;
+using BCrypt.Net;
 
 namespace ClothingStoreApplication;
 
 public class AuthService : IAuthService
 {
     private readonly IBuyersDAO _buyersDAO;
-    private readonly ApplicationDbContext _context;
     private readonly IHttpContextAccessor _httpContextAccessor;
     private Mapper _buyerDTO;
 
-    public AuthService(IBuyersDAO buyersDAO, ApplicationDbContext context, IHttpContextAccessor httpContextAccessor){
+    public AuthService(IBuyersDAO buyersDAO, IHttpContextAccessor httpContextAccessor){
         _buyersDAO = buyersDAO;
-        _context = context;
         _httpContextAccessor = httpContextAccessor;
 
         var _buyerDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Buyer, BuyerDTO>().ReverseMap());
@@ -30,7 +29,8 @@ public class AuthService : IAuthService
     }
 
     public async Task Register(BuyerAddDTO buyerInfo){
-        if(await _context.Buyers.AnyAsync(b => b.Email == buyerInfo.Email)){
+        var checkEmail = await _buyersDAO.GetByEmail(buyerInfo.Email);
+        if(checkEmail != null){
             throw new Exception("Пользователь с таким Email уже существует.");
         }
 
@@ -76,7 +76,7 @@ public class AuthService : IAuthService
     }
 
     public async Task Login(string email, string password){
-        var buyer = await _context.Buyers.FirstOrDefaultAsync(b => b.Email == email);
+        var buyer = await _buyersDAO.GetByEmail(email);
         if (buyer == null || !BCrypt.Net.BCrypt.Verify(password, buyer.Password))
         {
             throw new Exception("Неверный Email или пароль.");

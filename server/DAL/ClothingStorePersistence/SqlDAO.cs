@@ -23,10 +23,12 @@ public class SqlDAO : IClothesDAO
 
         return cloth;
     }
+
     public async Task AddCloth(Cloth cloth){
         await _context.Clothes.AddAsync(cloth);
         await _context.SaveChangesAsync();
     }
+
     public async Task UpdateCloth(Cloth clothUpdt, Guid id){
         var cloth = await _context.Clothes.FindAsync(id);  
         if(cloth == null){
@@ -44,6 +46,7 @@ public class SqlDAO : IClothesDAO
 
         await _context.SaveChangesAsync();
     }
+    
     public async Task DeleteCloth(Guid id){
         var cloth = await _context.Clothes.FindAsync(id);
         if(cloth == null){
