@@ -1,4 +1,3 @@
-using System;
 using ClothDomain;
 
 namespace ClothesInterfacesDAL;

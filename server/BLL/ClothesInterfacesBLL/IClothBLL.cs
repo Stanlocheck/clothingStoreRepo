@@ -1,5 +1,3 @@
-using System;
-using ClothDomain;
 using ClothDTOs;
 
 namespace ClothesInterfacesBLL;
@@ -13,4 +11,6 @@ public interface IClothBLL
     public Task DeleteCloth(Guid id);
     public Task<List<ClothDTO>> GetMensClothing();
     public Task<List<ClothDTO>> GetWomensClothing();
+    public Task AddToCart(Guid clothId);
+    public Task AddToWishlist(Guid clothId);
 }

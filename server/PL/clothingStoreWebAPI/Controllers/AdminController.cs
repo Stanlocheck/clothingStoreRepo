@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ClothesInterfacesBLL;
 using ClothDTOs;
@@ -26,7 +25,6 @@ namespace clothingStoreWebAPI.Controllers
         /// </summary>
         /// <param name="updtAdmin">Схема модератора.</param>
         /// <returns>Информация о модераторе.</returns>
-        [Authorize(Policy = "AdminOnly")]
         [HttpPut]
         public async Task<ActionResult> UpdateAdmin(AdminUpdateDTO updtAdmin){
             try{

@@ -1,4 +1,3 @@
-using System;
 using AutoMapper;
 using ClothDomain;
 using ClothesInterfacesBLL;
@@ -12,20 +11,12 @@ namespace ClothingStoreApplication;
 public class AdminBusiness : IAdminsBLL
 {
     private readonly IAdminsDAO _adminsDAO;
-    private Mapper _adminDTO;
-    private Mapper _adminAddDTO;
     private Mapper _adminUpdateDTO;
     private readonly IHttpContextAccessor _httpContextAccessor;
 
     public AdminBusiness(IAdminsDAO adminsDAO, IHttpContextAccessor httpContextAccessor){
         _adminsDAO = adminsDAO;
         _httpContextAccessor = httpContextAccessor;
-
-        var _adminDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Admin, AdminDTO>().ReverseMap());
-        _adminDTO = new Mapper(_adminDtoMapping);
-
-        var _adminAddDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Admin, AdminAddDTO>().ReverseMap());
-        _adminAddDTO = new Mapper(_adminAddDtoMapping);
 
         var _adminUpdateDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Admin, AdminUpdateDTO>().ReverseMap());
         _adminUpdateDTO = new Mapper(_adminUpdateDtoMapping);

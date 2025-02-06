@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using ClothesInterfacesBLL;
 using ClothDTOs;
 using Microsoft.AspNetCore.Authorization;
-using ClothDTOs.WishlistDTOs;
 
 namespace clothingStoreWebAPI.Controllers
 {
@@ -14,13 +13,9 @@ namespace clothingStoreWebAPI.Controllers
     public class ClothController : ControllerBase
     {
         private IClothBLL _clothBLL;
-        private ICartBLL _cartItemBLL;
-        private IWishlistBLL _wishlistItemBLL;
 
-        public ClothController(IClothBLL clothBLL, ICartBLL cartItemBLL, IWishlistBLL wishlistBLL) {
+        public ClothController(IClothBLL clothBLL) {
             _clothBLL = clothBLL;
-            _cartItemBLL = cartItemBLL;
-            _wishlistItemBLL = wishlistBLL;
         }
 
 
@@ -155,82 +150,8 @@ namespace clothingStoreWebAPI.Controllers
         [Route("addToCart")]
         public async Task<ActionResult> AddToCart(Guid clothId){
             try{
-                await _cartItemBLL.AddToCart(clothId);
+                await _clothBLL.AddToCart(clothId);
                 return Ok();
-            }
-            catch(Exception ex){
-                return BadRequest(ex.Message);
-            }
-        }
-
-
-        /// <summary>
-        /// Получает информацию о продуктах в корзине авторизованного пользователя.
-        /// </summary>
-        /// <returns>Информация о продуктах.</returns>
-        [Authorize(Policy = "BuyerOnly")]
-        [HttpGet]
-        [Route("cart")]
-        public async Task<ActionResult<List<CartItemDTO>>> GetCartItems(){
-            try{
-                var cart = await _cartItemBLL.GetCartItems();
-                return Ok(cart);
-            }
-            catch(Exception ex){
-                return BadRequest(ex.Message);
-            }
-        }
-
-
-        /// <summary>
-        /// Изменяет количество продукта в корзине на +1.
-        /// </summary>
-        /// <param name="cartId">Идентификатор продукта в корзине.</param>
-        /// <returns>Информация о продукте.</returns>
-        [Authorize(Policy = "BuyerOnly")]
-        [HttpPut]
-        [Route("addAmountOfCartItem")]
-        public async Task<ActionResult> AddAmountOfCartItem(Guid cartId){
-            try{
-                await _cartItemBLL.AddAmountOfCartItem(cartId);
-                return Ok(); 
-            }
-            catch(Exception ex){
-                return BadRequest(ex.Message);
-            }
-        }
-
-
-        /// <summary>
-        /// Изменяет количество продукта в корзине на -1.
-        /// </summary>
-        /// <param name="cartId">Идентификатор продукта в корзине.</param>
-        /// <returns>Информация о продукте.</returns>
-        [Authorize(Policy = "BuyerOnly")]
-        [HttpPut]
-        [Route("reduceAmountOfCartItem")]
-        public async Task<ActionResult> ReduceAmountOfCartItem(Guid cartId){
-            try{
-                await _cartItemBLL.ReduceAmountOfCartItem(cartId);
-                return Ok(); 
-            }
-            catch(Exception ex){
-                return BadRequest(ex.Message);
-            }
-        }
-
-        /// <summary>
-        /// Удаляет продукт из корзины.
-        /// </summary>
-        /// <param name="cartId">Идентификатор продукта в корзине.</param>
-        /// <returns>Информация о продукте.</returns>
-        [Authorize(Policy = "BuyerOnly")]
-        [HttpDelete]
-        [Route("deleteCartItem")]
-        public async Task<ActionResult> DeleteCartItem(Guid cartId){
-            try{
-                await _cartItemBLL.DeleteCartItem(cartId);
-                return Ok(); 
             }
             catch(Exception ex){
                 return BadRequest(ex.Message);
@@ -248,64 +169,8 @@ namespace clothingStoreWebAPI.Controllers
         [Route("addToWishlist")]
         public async Task<ActionResult> AddToWishlist(Guid clothId){
             try{
-                await _wishlistItemBLL.AddToWishlist(clothId);
+                await _clothBLL.AddToWishlist(clothId);
                 return Ok();
-            }
-            catch(Exception ex){
-                return BadRequest(ex.Message);
-            }
-        }
-
-
-        /// <summary>
-        /// Получает информацию о продуктах в вишлисте авторизованного пользователя.
-        /// </summary>
-        /// <returns>Информация о продуктах.</returns>
-        [Authorize(Policy = "BuyerOnly")]
-        [HttpGet]
-        [Route("wishlist")]
-        public async Task<ActionResult<List<WishlistItemDTO>>> GetWishlistItems(){
-            try{
-                var wishlist = await _wishlistItemBLL.GetWishlistItems();
-                return Ok(wishlist);
-            }
-            catch(Exception ex){
-                return BadRequest(ex.Message);
-            }
-        }
-
-        
-        /// <summary>
-        /// Добавляет продукт из вишлиста в корзину.
-        /// </summary>
-        /// <param name="wishlistId">Идентификатор продукта в вишлисте.</param>
-        /// <returns>Информация о продукте.</returns>
-        [Authorize(Policy = "BuyerOnly")]
-        [HttpPost]
-        [Route("fromWishlistToCart")]
-        public async Task<ActionResult> FromWishlistToCart(Guid wishlistId){
-            try{
-                await _wishlistItemBLL.FromWishlistToCart(wishlistId);
-                return Ok();
-            }
-            catch(Exception ex){
-                return BadRequest(ex.Message);
-            }
-        }
-
-
-        /// <summary>
-        /// Удаляет продукт из вишлиста.
-        /// </summary>
-        /// <param name="wishlistId">Идентификатор продукта в вишлисте.</param>
-        /// <returns>Информация о продукте.</returns>
-        [Authorize(Policy = "BuyerOnly")]
-        [HttpDelete]
-        [Route("deleteWishlistItem")]
-        public async Task<ActionResult> DeleteWishlistItem(Guid wishlistId){
-            try{
-                await _wishlistItemBLL.DeleteWishlistItem(wishlistId);
-                return Ok(); 
             }
             catch(Exception ex){
                 return BadRequest(ex.Message);
