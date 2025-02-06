@@ -19,15 +19,33 @@ namespace clothingStoreWebAPI.Controllers
             _cartItemBLL = cartItemBLL;
         }
 
+
         /// <summary>
         /// Получает информацию о продуктах в корзине авторизованного пользователя.
         /// </summary>
         /// <returns>Информация о продуктах.</returns>
         [HttpGet]
-        public async Task<ActionResult<List<CartItemDTO>>> GetCartItems(){
+        public async Task<ActionResult<CartDTO>> GetCart(){
             try{
-                var cart = await _cartItemBLL.GetCartItems();
+                var cart = await _cartItemBLL.GetCart();
                 return Ok(cart);
+            }
+            catch(Exception ex){
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// Добавляет продукт в корзину авторизованного пользователя.
+        /// </summary>
+        /// <param name="clothId">Идентификатор продукта.</param>
+        /// <returns>Информация о продукте.</returns>
+        [HttpPost]
+        public async Task<ActionResult> AddToCart(Guid clothId){
+            try{
+                await _cartItemBLL.AddToCart(clothId);
+                return Ok();
             }
             catch(Exception ex){
                 return BadRequest(ex.Message);

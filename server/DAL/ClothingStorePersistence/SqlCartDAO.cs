@@ -12,103 +12,119 @@ public class SqlCartDAO : ICartDAO
         _context = context;
     }
 
-    public async Task<List<CartItem>> GetCartItems(Guid buyerId){
-        var cart = await _context.Carts.Include(c => c.Items).ThenInclude(ci => ci.Cloth).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
+    public async Task<List<Cart>> GetAllCarts(){
+        return await _context.Carts.Include(c => c.Items).ToListAsync();
+    }
+
+    public async Task<Cart> GetCart(Guid buyerId){
+        var cart = await _context.Carts.Include(c => c.Items).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
         if(cart == null){
-            cart = new Cart { BuyerId = buyerId };
-            await _context.Carts.AddAsync(cart);
+            await CreateCart(buyerId);
+            return new Cart { BuyerId = buyerId, Price = 0 };
         }
 
-        return cart.Items.ToList();
+        return cart;
+    }
+
+    public async Task CreateCart(Guid buyerId){
+        var cart = new Cart { BuyerId = buyerId, Price = 0 };
+
+        await _context.Carts.AddAsync(cart);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<CartItem> GetCartItem(Guid buyerId, Guid cartItemId){
+        var cart = await GetCart(buyerId);
+
+        var cartItem = cart.Items.FirstOrDefault(ci => ci.Id == cartItemId);
+        if(cartItem == null){
+            throw new Exception("Продукт не найден.");
+        }
+
+        return cartItem;
+    }
+
+    public async Task AddToCart(Guid buyerId, Guid clothId){
+        var cart = await GetCart(buyerId);
+
+        var getById = new SqlDAO(_context);
+        var cloth = await getById.GetById(clothId);
+
+        var cartItem = cart.Items.FirstOrDefault(ci => ci.ClothId == clothId);
+        if(cartItem != null){
+            cartItem.Amount++;
+            cartItem.Price+=cloth.Price;
+            cart.Price+=cloth.Price;
+        }
+        else {
+            cart.Items.Add(new CartItem { ClothId = clothId, Amount = 1, Selected = true, Price = cloth.Price });
+            cart.Price+=cloth.Price;
+        }
+
+        await _context.SaveChangesAsync();
     }
 
     public async Task AddAmountOfCartItem(Guid buyerId, Guid cartItemId){
-        var cart = await _context.Carts.Include(c => c.Items).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
-        if(cart == null){
-            cart = new Cart { BuyerId = buyerId };
-            await _context.Carts.AddAsync(cart);
-        }
+        var cart = await GetCart(buyerId);
+        var cartItem = await GetCartItem(buyerId, cartItemId);
 
-        var existingItem = cart.Items.FirstOrDefault(ci => ci.Id == cartItemId);
-        if(existingItem == null){
-            throw new Exception("Продукт не найден.");
-        }
-        
-        SqlDAO getById = new SqlDAO(_context);
-        var cloth = await getById.GetById(existingItem.ClothId);
+        var getById = new SqlDAO(_context);
+        var cloth = await getById.GetById(cartItem.ClothId);
 
-        existingItem.Amount++;
-        existingItem.Price+=cloth.Price;
-        cart.Price+=cloth.Price;
+        cartItem.Amount++;
+        cartItem.Price+=cloth.Price;
+        if(cartItem.Selected == true){
+            cart.Price+=cloth.Price;
+        }
 
         await _context.SaveChangesAsync();
     }
 
     public async Task ReduceAmountOfCartItem(Guid buyerId, Guid cartItemId){
-        var cart = await _context.Carts.Include(c => c.Items).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
-        if(cart == null){
-            cart = new Cart { BuyerId = buyerId };
-            await _context.Carts.AddAsync(cart);
+        var cart = await GetCart(buyerId);
+        var cartItem = await GetCartItem(buyerId, cartItemId);
+
+        var getById = new SqlDAO(_context);
+        var cloth = await getById.GetById(cartItem.ClothId);
+
+        cartItem.Amount--;
+        cartItem.Price-=cloth.Price;
+        if(cartItem.Selected == true){
+            cart.Price-=cloth.Price;
         }
 
-        var existingItem = cart.Items.FirstOrDefault(ci => ci.Id == cartItemId);
-        if(existingItem == null){
-            throw new Exception("Продукт не найден.");
-        }
-
-        SqlDAO getById = new SqlDAO(_context);
-        var cloth = await getById.GetById(existingItem.ClothId);
-
-        existingItem.Amount--;
-        existingItem.Price-=cloth.Price;
-        cart.Price-=cloth.Price;
-
-        if(existingItem.Amount == 0){
-            _context.CartItems.Remove(existingItem);
+        if(cartItem.Amount == 0){
+            _context.CartItems.Remove(cartItem);
         }
 
         await _context.SaveChangesAsync();
     }
 
     public async Task DeleteCartItem(Guid buyerId, Guid cartItemId){
-        var cart = await _context.Carts.Include(c => c.Items).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
-        if(cart == null){
-            cart = new Cart { BuyerId = buyerId };
-            await _context.Carts.AddAsync(cart);
-        }
+        var cart = await GetCart(buyerId);
+        var cartItem = await GetCartItem(buyerId, cartItemId);
 
-        var existingItem = cart.Items.FirstOrDefault(ci => ci.Id == cartItemId);
-        if(existingItem == null){
-            throw new Exception("Продукт не найден.");
+        if(cartItem.Selected == true){
+            cart.Price-=cartItem.Price;
         }
-
-        cart.Price-=existingItem.Price;
-        _context.CartItems.Remove(existingItem);
+        _context.CartItems.Remove(cartItem);
 
         await _context.SaveChangesAsync();
     }
 
     public async Task SelectCartItem(Guid buyerId, Guid cartItemId){
-        var cart = await _context.Carts.Include(c => c.Items).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
-        if(cart == null){
-            cart = new Cart { BuyerId = buyerId };
-            await _context.Carts.AddAsync(cart);
-        }
+        var cart = await GetCart(buyerId);
+        var cartItem = await GetCartItem(buyerId, cartItemId);
 
-        var existingItem = cart.Items.FirstOrDefault(ci => ci.Id == cartItemId);
-        if(existingItem == null){
-            throw new Exception("Продукт не найден.");
-        }
-
-        if(existingItem.Selected == true){
-            existingItem.Selected = false;
-            cart.Price-=existingItem.Price;
+        if(cartItem.Selected == true){
+            cartItem.Selected = false;
+            cart.Price-=cartItem.Price;
         }
         else{
-            existingItem.Selected = true;
-            cart.Price+=existingItem.Price;
+            cartItem.Selected = true;
+            cart.Price+=cartItem.Price;
         }
-        
+
         await _context.SaveChangesAsync();
     }
 }

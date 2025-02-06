@@ -138,43 +138,5 @@ namespace clothingStoreWebAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
-
-        /// <summary>
-        /// Добавляет продукт в корзину авторизованного пользователя.
-        /// </summary>
-        /// <param name="clothId">Идентификатор продукта.</param>
-        /// <returns>Информация о продукте.</returns>
-        [Authorize(Policy = "BuyerOnly")]
-        [HttpPost]
-        [Route("addToCart")]
-        public async Task<ActionResult> AddToCart(Guid clothId){
-            try{
-                await _clothBLL.AddToCart(clothId);
-                return Ok();
-            }
-            catch(Exception ex){
-                return BadRequest(ex.Message);
-            }
-        }
-
-
-        /// <summary>
-        /// Добавляет продукт в вишлист авторизованного пользователя.
-        /// </summary>
-        /// <param name="clothId">Идентификатор продукта.</param>
-        /// <returns>Информация о продукте.</returns>
-        [Authorize(Policy = "BuyerOnly")]
-        [HttpPost]
-        [Route("addToWishlist")]
-        public async Task<ActionResult> AddToWishlist(Guid clothId){
-            try{
-                await _clothBLL.AddToWishlist(clothId);
-                return Ok();
-            }
-            catch(Exception ex){
-                return BadRequest(ex.Message);
-            }
-        }
     }
 }

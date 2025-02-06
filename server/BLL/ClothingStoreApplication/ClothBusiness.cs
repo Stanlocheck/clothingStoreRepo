@@ -136,24 +136,4 @@ public class ClothBusiness : IClothBLL
             throw new Exception(ex.Message);
         }
     }
-
-    public async Task AddToCart(Guid clothId){
-        try{
-            var buyerId = GetLoggedInBuyerId();
-            await _clothDAO.AddToCart(buyerId, clothId);
-        }
-        catch(Exception ex){
-            throw new Exception(ex.Message);
-        }
-    }
-
-    public async Task AddToWishlist(Guid clothId){
-        try{
-            var buyerId = GetLoggedInBuyerId();
-            await _clothDAO.AddToWishlist(buyerId, clothId);
-        }
-        catch(Exception ex){
-            throw new Exception(ex.Message);
-        }
-    }
 }

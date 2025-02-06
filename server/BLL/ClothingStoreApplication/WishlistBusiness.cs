@@ -47,11 +47,21 @@ public class WishlistBusiness : IWishlistBLL
         return buyerId;
     }
 
-    public async Task<List<WishlistItemDTO>> GetWishlistItems(){
+    public async Task<List<WishlistItemDTO>> GetAllWishlistItems(){
         try{
             var buyerId = GetLoggedInBuyerId();
-            var wishlist = await _wishlistDAO.GetWishlistItems(buyerId);
+            var wishlist = await _wishlistDAO.GetAllWishlistItems(buyerId);
             return _wishlistItemDTO.Map<List<WishlistItemDTO>>(wishlist);
+        }
+        catch(Exception ex){
+            throw new Exception(ex.Message);
+        }
+    }
+
+    public async Task AddToWishlist(Guid clothId){
+        try{
+            var buyerId = GetLoggedInBuyerId();
+            await _wishlistDAO.AddToWishlist(buyerId, clothId);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);

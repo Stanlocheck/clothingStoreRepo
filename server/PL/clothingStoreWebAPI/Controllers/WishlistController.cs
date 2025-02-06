@@ -25,10 +25,27 @@ namespace clothingStoreWebAPI.Controllers
         /// </summary>
         /// <returns>Информация о продуктах.</returns>
         [HttpGet]
-        public async Task<ActionResult<List<WishlistItemDTO>>> GetWishlistItems(){
+        public async Task<ActionResult<List<WishlistItemDTO>>> GetAllWishlistItems(){
             try{
-                var wishlist = await _wishlistItemBLL.GetWishlistItems();
+                var wishlist = await _wishlistItemBLL.GetAllWishlistItems();
                 return Ok(wishlist);
+            }
+            catch(Exception ex){
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// Добавляет продукт в вишлист авторизованного пользователя.
+        /// </summary>
+        /// <param name="clothId">Идентификатор продукта.</param>
+        /// <returns>Информация о продукте.</returns>
+        [HttpPost]
+        public async Task<ActionResult> AddToWishlist(Guid clothId){
+            try{
+                await _wishlistItemBLL.AddToWishlist(clothId);
+                return Ok();
             }
             catch(Exception ex){
                 return BadRequest(ex.Message);
@@ -42,6 +59,7 @@ namespace clothingStoreWebAPI.Controllers
         /// <param name="wishlistItemId">Идентификатор продукта в вишлисте.</param>
         /// <returns>Информация о продукте.</returns>
         [HttpPost]
+        [Route("fromWishlistToCart")]
         public async Task<ActionResult> FromWishlistToCart(Guid wishlistItemId){
             try{
                 await _wishlistItemBLL.FromWishlistToCart(wishlistItemId);
