@@ -58,20 +58,20 @@ public class WishlistBusiness : IWishlistBLL
         }
     }
 
-    public async Task FromWishlistToCart(Guid wishlistId){
+    public async Task FromWishlistToCart(Guid wishlistItemId){
         try{
             var buyerId = GetLoggedInBuyerId();
-            await _wishlistDAO.FromWishlistToCart(buyerId, wishlistId);
+            await _wishlistDAO.FromWishlistToCart(buyerId, wishlistItemId);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
     }
 
-    public async Task DeleteWishlistItem(Guid wishlistId){
+    public async Task DeleteWishlistItem(Guid wishlistItemId){
         try{
             var buyerId = GetLoggedInBuyerId();
-            await _wishlistDAO.FromWishlistToCart(buyerId, wishlistId);
+            await _wishlistDAO.FromWishlistToCart(buyerId, wishlistItemId);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);

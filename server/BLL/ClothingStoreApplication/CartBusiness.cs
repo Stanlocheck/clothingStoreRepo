@@ -56,30 +56,40 @@ public class CartBusiness : ICartBLL
         }
     }
 
-    public async Task AddAmountOfCartItem(Guid cartId){
+    public async Task AddAmountOfCartItem(Guid cartItemId){
         try{
             var buyerId = GetLoggedInBuyerId();
-            await _cartDAO.AddAmountOfCartItem(buyerId, cartId);
+            await _cartDAO.AddAmountOfCartItem(buyerId, cartItemId);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
     }
 
-    public async Task ReduceAmountOfCartItem(Guid cartId){
+    public async Task ReduceAmountOfCartItem(Guid cartItemId){
         try{
             var buyerId = GetLoggedInBuyerId();
-            await _cartDAO.ReduceAmountOfCartItem(buyerId, cartId);
+            await _cartDAO.ReduceAmountOfCartItem(buyerId, cartItemId);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
     }
 
-    public async Task DeleteCartItem(Guid cartId){
+    public async Task DeleteCartItem(Guid cartItemId){
         try{
             var buyerId = GetLoggedInBuyerId();
-            await _cartDAO.DeleteCartItem(buyerId, cartId);
+            await _cartDAO.DeleteCartItem(buyerId, cartItemId);
+        }
+        catch(Exception ex){
+            throw new Exception(ex.Message);
+        }
+    }
+
+    public async Task SelectCartItem(Guid cartItemId){
+        try{
+            var buyerId = GetLoggedInBuyerId();
+            await _cartDAO.SelectCartItem(buyerId, cartItemId);
         }
         catch(Exception ex){
             throw new Exception(ex.Message);

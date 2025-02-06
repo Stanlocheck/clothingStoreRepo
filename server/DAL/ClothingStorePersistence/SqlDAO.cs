@@ -15,6 +15,7 @@ public class SqlDAO : IClothesDAO
     public async Task<List<Cloth>> GetAll(){
         return await _context.Clothes.ToListAsync();
     }
+
     public async Task<Cloth> GetById(Guid id){
         var cloth = await _context.Clothes.FirstOrDefaultAsync(_cloth => _cloth.Id == id);
         if(cloth == null){
@@ -71,19 +72,26 @@ public class SqlDAO : IClothesDAO
             cart = new Cart { BuyerId = buyerId };
             await _context.Carts.AddAsync(cart);
         }
+        
+        var cloth = await GetById(clothId);
 
         var existingItem = cart.Items.FirstOrDefault(ci => ci.ClothId == clothId);
         if(existingItem != null){
             existingItem.Amount++;
+            existingItem.Price+=cloth.Price;
+            cart.Price+=cloth.Price;
         }
         else {
-            cart.Items.Add(new CartItem {ClothId = clothId, Amount = 1});
+            cart.Items.Add(new CartItem { ClothId = clothId, Amount = 1, Selected = true, Price = cloth.Price });
+            cart.Price+=cloth.Price;
         }
 
         await _context.SaveChangesAsync();
     }
 
     public async Task AddToWishlist(Guid buyerId, Guid clothId){
+        var cloth = await GetById(clothId);
+
         var wishlist = await _context.Wishlists.Include(c => c.Items).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
         if(wishlist == null){
             wishlist = new Wishlist { BuyerId = buyerId };
@@ -95,7 +103,7 @@ public class SqlDAO : IClothesDAO
             throw new Exception("Продукт уже в вишлисте.");
         }
         
-        wishlist.Items.Add(new WishlistItem { ClothId = clothId });
+        wishlist.Items.Add(new WishlistItem { ClothId = clothId, Price = cloth.Price });
         await _context.SaveChangesAsync();
     }
 }

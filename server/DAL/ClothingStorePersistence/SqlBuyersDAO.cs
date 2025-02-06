@@ -25,11 +25,8 @@ public class SqlBuyersDAO : IBuyersDAO
         return buyer;
     }
 
-    public async Task<Buyer> GetByEmail(string email){
+    public async Task<Buyer?> GetByEmail(string email){
         var buyer = await _context.Buyers.FirstOrDefaultAsync(_buyer => _buyer.Email == email);
-        if(buyer == null){
-            throw new Exception("Пользователь не найден.");
-        }
 
         return buyer;
     }

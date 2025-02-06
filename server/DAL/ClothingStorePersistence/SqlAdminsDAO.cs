@@ -25,11 +25,8 @@ public class SqlAdminsDAO : IAdminsDAO
         return admin;
     }
 
-    public async Task<Admin> GetByEmail(string email){
+    public async Task<Admin?> GetByEmail(string email){
         var admin = await _dbContext.Admins.FirstOrDefaultAsync(_admin => _admin.Email == email);
-        if(admin == null){
-            throw new Exception("Пользователь не найден.");
-        }
 
         return admin;
     }

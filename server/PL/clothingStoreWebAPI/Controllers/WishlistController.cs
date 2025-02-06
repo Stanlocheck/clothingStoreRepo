@@ -39,13 +39,12 @@ namespace clothingStoreWebAPI.Controllers
         /// <summary>
         /// Добавляет продукт в корзину из вишлиста.
         /// </summary>
-        /// <param name="wishlistId">Идентификатор продукта в вишлисте.</param>
+        /// <param name="wishlistItemId">Идентификатор продукта в вишлисте.</param>
         /// <returns>Информация о продукте.</returns>
         [HttpPost]
-        [Route("fromWishlistToCart")]
-        public async Task<ActionResult> FromWishlistToCart(Guid wishlistId){
+        public async Task<ActionResult> FromWishlistToCart(Guid wishlistItemId){
             try{
-                await _wishlistItemBLL.FromWishlistToCart(wishlistId);
+                await _wishlistItemBLL.FromWishlistToCart(wishlistItemId);
                 return Ok();
             }
             catch(Exception ex){
@@ -57,12 +56,12 @@ namespace clothingStoreWebAPI.Controllers
         /// <summary>
         /// Удаляет продукт из вишлиста.
         /// </summary>
-        /// <param name="wishlistId">Идентификатор продукта в вишлисте.</param>
+        /// <param name="wishlistItemId">Идентификатор продукта в вишлисте.</param>
         /// <returns>Информация о продукте.</returns>
-        [HttpDelete("{wishlistId}")]
-        public async Task<ActionResult> DeleteWishlistItem(Guid wishlistId){
+        [HttpDelete("{wishlistItemId}")]
+        public async Task<ActionResult> DeleteWishlistItem(Guid wishlistItemId){
             try{
-                await _wishlistItemBLL.DeleteWishlistItem(wishlistId);
+                await _wishlistItemBLL.DeleteWishlistItem(wishlistItemId);
                 return Ok(); 
             }
             catch(Exception ex){

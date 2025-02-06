@@ -10,7 +10,6 @@ using ClothDomain;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System.Text.RegularExpressions;
-using BCrypt.Net;
 
 namespace ClothingStoreApplication;
 
