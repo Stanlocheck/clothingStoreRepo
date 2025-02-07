@@ -7,4 +7,5 @@ public interface IOrderDAO
     public Task<List<Order>> GetAllOrders(Guid buyerId);
     public Task<Order> GetOrder(Guid buyerId, Guid orderId);
     public Task CreateOrder(Guid buyerId);
+    public Task SelectOrderStatus(Guid orderId, OrderStatus status);
 }

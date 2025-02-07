@@ -78,4 +78,17 @@ public class OrderBusiness : IOrderBLL
             throw new Exception(ex.Message);
         }
     }
+
+    public async Task SelectOrderStatus(Guid orderId, string status){
+        try{
+            var _status = Enum.Parse<OrderStatus>(status.ToUpper());
+            await _orderDAO.SelectOrderStatus(orderId, _status);
+        }
+        catch(ArgumentException){
+            throw new Exception("Неверно указан статус.");
+        }
+        catch(Exception ex){
+            throw new Exception(ex.Message);
+        }
+    }
 }
