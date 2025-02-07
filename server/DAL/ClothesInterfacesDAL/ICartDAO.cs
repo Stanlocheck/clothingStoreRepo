@@ -13,4 +13,5 @@ public interface ICartDAO
     public Task ReduceAmountOfCartItem(Guid buyerId, Guid cartId);
     public Task DeleteCartItem(Guid buyerId, Guid cartId);
     public Task SelectCartItem(Guid buyerId, Guid cartId);
+    public Task<List<CartItem>> GetAllSelectedItems(Guid buyerId);
 }

@@ -1,10 +1,8 @@
-﻿using System.Security.Claims;
-using AutoMapper;
+﻿using AutoMapper;
 using ClothDomain;
 using ClothDTOs;
 using ClothesInterfacesBLL;
 using ClothesInterfacesDAL;
-using Microsoft.AspNetCore.Http;
 
 namespace ClothingStoreApplication;
 
@@ -13,10 +11,8 @@ public class ClothBusiness : IClothBLL
     private Mapper _clothDTO;
     private Mapper _clothAddDTO;
     private readonly IClothesDAO _clothDAO;
-    private readonly IHttpContextAccessor _httpContextAccessor;
-    public ClothBusiness(IClothesDAO clothDAO, IHttpContextAccessor httpContextAccessor){
+    public ClothBusiness(IClothesDAO clothDAO){
         _clothDAO = clothDAO;
-        _httpContextAccessor = httpContextAccessor;
 
         var _clothDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Cloth, ClothDTO>().ReverseMap());
         _clothDTO = new Mapper(_clothDtoMapping);
@@ -25,23 +21,8 @@ public class ClothBusiness : IClothBLL
         _clothAddDTO = new Mapper(_clothAddDtoMapping);
     }
 
-    private Guid GetLoggedInBuyerId(){
-        var httpContext = _httpContextAccessor.HttpContext;
-        if(httpContext == null){
-            throw new Exception("HttpContext недоступен.");
-        }
-
-        var buyerIdClaim = httpContext.User.Claims.FirstOrDefault(c => c.Type == ClaimTypes.NameIdentifier);
-
-        if(buyerIdClaim == null || !Guid.TryParse(buyerIdClaim.Value, out var buyerId)){
-            throw new Exception("Пользователь не авторизован.");
-        }
-
-        return buyerId;
-    }
-
     public async Task<List<ClothDTO>> GetAll(){
-        try {
+        try{
             var cloth = await _clothDAO.GetAll();
             return _clothDTO.Map<List<Cloth>, List<ClothDTO>>(cloth);
         }

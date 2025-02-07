@@ -61,6 +61,9 @@ builder.Services.AddScoped<ICartBLL, CartBusiness>();
 builder.Services.AddScoped<IWishlistDAO, SqlWishlistDAO>();
 builder.Services.AddScoped<IWishlistBLL, WishlistBusiness>();
 
+builder.Services.AddScoped<IOrderDAO, SqlOrderDAO>();
+builder.Services.AddScoped<IOrderBLL, OrderBusiness>();
+
 builder.Services.AddScoped<IBuyersDAO, SqlBuyersDAO>();
 builder.Services.AddScoped<IBuyersBLL, BuyerBusiness>();
 

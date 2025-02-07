@@ -4,6 +4,8 @@ namespace ClothDomain;
 
 public enum OrderStatus
 {
+    [Display(Name = "Собирается")]
+    СОБИРАЕТСЯ,
     [Display(Name = "В пути")]
     В_ПУТИ,
     [Display(Name = "Ожидает в пункте выдачи")]
