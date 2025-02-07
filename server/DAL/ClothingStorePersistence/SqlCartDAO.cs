@@ -20,14 +20,14 @@ public class SqlCartDAO : ICartDAO
         var cart = await _context.Carts.Include(c => c.Items).FirstOrDefaultAsync(c => c.BuyerId == buyerId);
         if(cart == null){
             await CreateCart(buyerId);
-            return new Cart { BuyerId = buyerId, Price = 0 };
+            return new Cart { BuyerId = buyerId, Price = 0, Amount = 0 };
         }
 
         return cart;
     }
 
     public async Task CreateCart(Guid buyerId){
-        var cart = new Cart { BuyerId = buyerId, Price = 0 };
+        var cart = new Cart { BuyerId = buyerId, Price = 0, Amount = 0 };
 
         await _context.Carts.AddAsync(cart);
         await _context.SaveChangesAsync();
@@ -55,10 +55,17 @@ public class SqlCartDAO : ICartDAO
             cartItem.Amount++;
             cartItem.Price+=cloth.Price;
             cart.Price+=cloth.Price;
+            cart.Amount++;
         }
         else {
-            cart.Items.Add(new CartItem { ClothId = clothId, Amount = 1, Selected = true, Price = cloth.Price });
+            cart.Items.Add(new CartItem { 
+                ClothId = clothId, 
+                Amount = 1, 
+                Selected = true, 
+                Price = cloth.Price 
+            });
             cart.Price+=cloth.Price;
+            cart.Amount++;
         }
 
         await _context.SaveChangesAsync();
@@ -75,6 +82,7 @@ public class SqlCartDAO : ICartDAO
         cartItem.Price+=cloth.Price;
         if(cartItem.Selected == true){
             cart.Price+=cloth.Price;
+            cart.Amount++;
         }
 
         await _context.SaveChangesAsync();
@@ -91,6 +99,7 @@ public class SqlCartDAO : ICartDAO
         cartItem.Price-=cloth.Price;
         if(cartItem.Selected == true){
             cart.Price-=cloth.Price;
+            cart.Amount--;
         }
 
         if(cartItem.Amount == 0){
@@ -106,6 +115,7 @@ public class SqlCartDAO : ICartDAO
 
         if(cartItem.Selected == true){
             cart.Price-=cartItem.Price;
+            cart.Amount-=cartItem.Amount;
         }
         _context.CartItems.Remove(cartItem);
 
@@ -119,12 +129,19 @@ public class SqlCartDAO : ICartDAO
         if(cartItem.Selected == true){
             cartItem.Selected = false;
             cart.Price-=cartItem.Price;
+            cart.Amount-=cartItem.Amount;
         }
         else{
             cartItem.Selected = true;
             cart.Price+=cartItem.Price;
+            cart.Amount+=cartItem.Amount;
         }
 
         await _context.SaveChangesAsync();
+    }
+
+    public async Task<List<CartItem>> GetAllSelectedItems(Guid buyerId){
+        var cart = await GetCart(buyerId);
+        return cart.Items.Where(ci => ci.Selected == true).ToList();
     }
 }
