@@ -10,4 +10,5 @@ public class BuyerUpdateDTO
     public string City { get; set; }
     public string StreetAddress { get; set; }
     public int ApartmentNumber { get; set; }
+    public int Balance { get; set; }
 }

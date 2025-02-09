@@ -53,4 +53,14 @@ public class SqlOrderDAO : IOrderDAO
         await _context.Orders.AddAsync(order);
         await _context.SaveChangesAsync();
     }
+
+    public async Task SelectOrderStatus(Guid orderId, OrderStatus status){
+        var order = await _context.Orders.Include(o => o.Items).FirstOrDefaultAsync(o => o.Id == orderId);
+        if(order == null){
+            throw new Exception("Заказ не найден.");
+        }
+
+        order.Status = status;
+        await _context.SaveChangesAsync();
+    }
 }

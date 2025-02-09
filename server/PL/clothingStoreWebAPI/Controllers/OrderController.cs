@@ -9,7 +9,6 @@ namespace clothingStoreWebAPI.Controllers
     /// <summary>
     /// Контроллер для работы с функциями заказа.
     /// </summary>
-    [Authorize(Policy = "BuyerOnly")]
     [Route("api/[controller]")]
     [ApiController]
     public class OrderController : ControllerBase
@@ -25,6 +24,7 @@ namespace clothingStoreWebAPI.Controllers
         /// Получает информацию о всех заказах авторизованного пользователя.
         /// </summary>
         /// <returns>Информация о заказах.</returns>
+        [Authorize(Policy = "BuyerOnly")]
         [HttpGet]
         public async Task<ActionResult<List<OrderDTO>>> GetAllOrders(){
             try{
@@ -42,6 +42,7 @@ namespace clothingStoreWebAPI.Controllers
         /// </summary>
         /// <param name="orderId">Идентификатор заказа.</param>
         /// <returns>Информация о заказе.</returns>
+        [Authorize(Policy = "BuyerOnly")]
         [HttpGet("{orderId}")]
         public async Task<ActionResult<OrderDTO>> GetOrder(Guid orderId){
             try{
@@ -58,10 +59,30 @@ namespace clothingStoreWebAPI.Controllers
         /// Создает заказ.
         /// </summary>
         /// <returns>Информация о заказе.</returns>
+        [Authorize(Policy = "BuyerOnly")]
         [HttpPost]
         public async Task<ActionResult> CreateOrder(){
             try{
                 await _orderBLL.CreateOrder();
+                return Ok();
+            }
+            catch(Exception ex){
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// Изменяет статус заказа на выбранный.
+        /// </summary>
+        /// <param name="orderId">Идентификатор заказа.</param>
+        /// <param name="status">Статус заказа.</param>
+        /// <returns>Информация о заказе.</returns>
+        [Authorize(Policy = "AdminOnly")]
+        [HttpPut]
+        public async Task<ActionResult> SelectOrderStatus(Guid orderId, string status){
+            try{
+                await _orderBLL.SelectOrderStatus(orderId, status);
                 return Ok();
             }
             catch(Exception ex){
