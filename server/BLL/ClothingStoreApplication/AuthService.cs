@@ -59,6 +59,7 @@ public class AuthService : IAuthService
                 City = buyerInfo.City,
                 StreetAddress = buyerInfo.StreetAddress,
                 ApartmentNumber = buyerInfo.ApartmentNumber,
+                Balance = buyerInfo.Balance,
                 Role = "Buyer"
             };
             Enum.Parse<Gender>(buyer.Sex);

@@ -50,6 +50,7 @@ public class SqlBuyersDAO : IBuyersDAO
         buyer.City = buyerUpdt.City;
         buyer.StreetAddress = buyerUpdt.StreetAddress;
         buyer.ApartmentNumber = buyerUpdt.ApartmentNumber;
+        buyer.Balance = buyerUpdt.Balance;
 
         await _context.SaveChangesAsync();
     }

@@ -73,7 +73,8 @@ public class BuyerBusiness : IBuyersBLL
                 PhoneNumber = buyerInfo.PhoneNumber,
                 City = buyerInfo.City,
                 StreetAddress = buyerInfo.StreetAddress,
-                ApartmentNumber = buyerInfo.ApartmentNumber
+                ApartmentNumber = buyerInfo.ApartmentNumber,
+                Balance = buyerInfo.Balance
             };
             Enum.Parse<Gender>(buyer.Sex);
             var buyerUpdateDTO = _buyerUpdateDTO.Map<BuyerUpdateDTO, Buyer>(buyer);
