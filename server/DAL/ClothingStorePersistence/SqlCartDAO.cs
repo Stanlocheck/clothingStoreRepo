@@ -1,15 +1,19 @@
+using System.Text.Json;
 using ClothDomain;
 using ClothesInterfacesDAL;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace ClothingStorePersistence;
 
 public class SqlCartDAO : ICartDAO
 {
     private readonly ApplicationDbContext _context;
+    private readonly IDistributedCache _cache;
 
-    public SqlCartDAO(ApplicationDbContext context){
+    public SqlCartDAO(ApplicationDbContext context, IDistributedCache cache){
         _context = context;
+        _cache = cache;
     }
 
     public async Task<List<Cart>> GetAllCarts(){
@@ -35,10 +39,22 @@ public class SqlCartDAO : ICartDAO
 
     public async Task<CartItem> GetCartItem(Guid buyerId, Guid cartItemId){
         var cart = await GetCart(buyerId);
+        CartItem? cartItem = null;
+        var cartItemCache = await _cache.GetStringAsync(cartItemId.ToString());
+        if(cartItemCache != null){
+            cartItem = JsonSerializer.Deserialize<CartItem>(cartItemCache);
+        }
 
-        var cartItem = cart.Items.FirstOrDefault(ci => ci.Id == cartItemId);
         if(cartItem == null){
-            throw new Exception("Продукт не найден.");
+            cartItem = cart.Items.FirstOrDefault(ci => ci.Id == cartItemId);
+            if(cartItem == null){
+                throw new Exception("Продукт не найден.");
+            }
+
+            cartItemCache = JsonSerializer.Serialize(cartItem);
+            await _cache.SetStringAsync(cartItem.Id.ToString(), cartItemCache, new DistributedCacheEntryOptions{
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2)
+            });
         }
 
         return cartItem;
@@ -47,7 +63,7 @@ public class SqlCartDAO : ICartDAO
     public async Task AddToCart(Guid buyerId, Guid clothId){
         var cart = await GetCart(buyerId);
 
-        var getById = new SqlDAO(_context);
+        var getById = new SqlDAO(_context, _cache);
         var cloth = await getById.GetById(clothId);
 
         var cartItem = cart.Items.FirstOrDefault(ci => ci.ClothId == clothId);
@@ -72,69 +88,68 @@ public class SqlCartDAO : ICartDAO
     }
 
     public async Task AddAmountOfCartItem(Guid buyerId, Guid cartItemId){
-        var cart = await GetCart(buyerId);
         var cartItem = await GetCartItem(buyerId, cartItemId);
 
-        var getById = new SqlDAO(_context);
+        var getById = new SqlDAO(_context, _cache);
         var cloth = await getById.GetById(cartItem.ClothId);
 
         cartItem.Amount++;
         cartItem.Price+=cloth.Price;
         if(cartItem.Selected == true){
-            cart.Price+=cloth.Price;
-            cart.Amount++;
+            cartItem.Cart.Price+=cloth.Price;
+            cartItem.Cart.Amount++;
         }
 
+        await _cache.RefreshAsync(cartItemId.ToString());
         await _context.SaveChangesAsync();
     }
 
     public async Task ReduceAmountOfCartItem(Guid buyerId, Guid cartItemId){
-        var cart = await GetCart(buyerId);
         var cartItem = await GetCartItem(buyerId, cartItemId);
 
-        var getById = new SqlDAO(_context);
+        var getById = new SqlDAO(_context, _cache);
         var cloth = await getById.GetById(cartItem.ClothId);
 
         cartItem.Amount--;
         cartItem.Price-=cloth.Price;
         if(cartItem.Selected == true){
-            cart.Price-=cloth.Price;
-            cart.Amount--;
+            cartItem.Cart.Price-=cloth.Price;
+            cartItem.Cart.Amount--;
         }
 
         if(cartItem.Amount == 0){
             _context.CartItems.Remove(cartItem);
         }
 
+        await _cache.RefreshAsync(cartItemId.ToString());
         await _context.SaveChangesAsync();
     }
 
     public async Task DeleteCartItem(Guid buyerId, Guid cartItemId){
-        var cart = await GetCart(buyerId);
         var cartItem = await GetCartItem(buyerId, cartItemId);
 
         if(cartItem.Selected == true){
-            cart.Price-=cartItem.Price;
-            cart.Amount-=cartItem.Amount;
+            cartItem.Cart.Price-=cartItem.Price;
+            cartItem.Cart.Amount-=cartItem.Amount;
         }
-        _context.CartItems.Remove(cartItem);
 
+        await _cache.RemoveAsync(cartItemId.ToString());
+        _context.CartItems.Remove(cartItem);
         await _context.SaveChangesAsync();
     }
 
     public async Task SelectCartItem(Guid buyerId, Guid cartItemId){
-        var cart = await GetCart(buyerId);
         var cartItem = await GetCartItem(buyerId, cartItemId);
 
         if(cartItem.Selected == true){
             cartItem.Selected = false;
-            cart.Price-=cartItem.Price;
-            cart.Amount-=cartItem.Amount;
+            cartItem.Cart.Price-=cartItem.Price;
+            cartItem.Cart.Amount-=cartItem.Amount;
         }
         else{
             cartItem.Selected = true;
-            cart.Price+=cartItem.Price;
-            cart.Amount+=cartItem.Amount;
+            cartItem.Cart.Price+=cartItem.Price;
+            cartItem.Cart.Amount+=cartItem.Amount;
         }
 
         await _context.SaveChangesAsync();

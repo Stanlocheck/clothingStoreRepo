@@ -1,15 +1,18 @@
 using ClothDomain;
 using ClothesInterfacesDAL;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace ClothingStorePersistence;
 
 public class SqlOrderDAO : IOrderDAO
 {
     private readonly ApplicationDbContext _context;
+    private readonly IDistributedCache _cache;
 
-    public SqlOrderDAO(ApplicationDbContext context){
+    public SqlOrderDAO(ApplicationDbContext context, IDistributedCache cache){
         _context = context;
+        _cache = cache;
     }
 
     public async Task<List<Order>> GetAllOrders(Guid buyerId){
@@ -31,7 +34,7 @@ public class SqlOrderDAO : IOrderDAO
             throw new Exception("Корзина пустая.");
         }
 
-        var sqlCartDAO = new SqlCartDAO(_context);
+        var sqlCartDAO = new SqlCartDAO(_context, _cache);
         var selectedItems = await sqlCartDAO.GetAllSelectedItems(buyerId);
 
         var order = new Order { 

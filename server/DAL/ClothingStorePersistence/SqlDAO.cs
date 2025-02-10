@@ -1,15 +1,20 @@
+using System.Text.Json;
 using ClothDomain;
 using ClothesInterfacesDAL;
+using Microsoft.AspNetCore.DataProtection.KeyManagement.Internal;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace ClothingStorePersistence;
 
 public class SqlDAO : IClothesDAO
 {
     private readonly ApplicationDbContext _context;
+    private readonly IDistributedCache _cache;
 
-    public SqlDAO(ApplicationDbContext context){
+    public SqlDAO(ApplicationDbContext context, IDistributedCache cache){
         _context = context;
+        _cache = cache;
     }
     
     public async Task<List<Cloth>> GetAll(){
@@ -17,9 +22,22 @@ public class SqlDAO : IClothesDAO
     }
 
     public async Task<Cloth> GetById(Guid id){
-        var cloth = await _context.Clothes.FirstOrDefaultAsync(_cloth => _cloth.Id == id);
+        Cloth? cloth = null;
+        var clothCache = await _cache.GetStringAsync(id.ToString());
+        if(clothCache != null){
+            cloth = JsonSerializer.Deserialize<Cloth>(clothCache);
+        }
+
         if(cloth == null){
-            throw new Exception("Продукт не найден.");
+            cloth = await _context.Clothes.FirstOrDefaultAsync(_cloth => _cloth.Id == id);
+            if(cloth == null){
+                throw new Exception("Продукт не найден.");
+            }
+
+            clothCache = JsonSerializer.Serialize(cloth);
+            await _cache.SetStringAsync(cloth.Id.ToString(), clothCache, new DistributedCacheEntryOptions{
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2)
+            });
         }
 
         return cloth;
@@ -27,14 +45,17 @@ public class SqlDAO : IClothesDAO
 
     public async Task AddCloth(Cloth cloth){
         await _context.Clothes.AddAsync(cloth);
+
+        var clothCache = JsonSerializer.Serialize(cloth);
+        await _cache.SetStringAsync(cloth.Id.ToString(), clothCache, new DistributedCacheEntryOptions{
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2)
+        });
+
         await _context.SaveChangesAsync();
     }
 
-    public async Task UpdateCloth(Cloth clothUpdt, Guid id){
-        var cloth = await _context.Clothes.FindAsync(id);  
-        if(cloth == null){
-            throw new Exception("Продукт не найден.");
-        } 
+    /*public async Task UpdateCloth(Cloth clothUpdt, Guid id){
+        var cloth = await GetById(id);
 
         cloth.Price = clothUpdt.Price;
         cloth.Size = clothUpdt.Size;
@@ -42,18 +63,21 @@ public class SqlDAO : IClothesDAO
         cloth.Brand = clothUpdt.Brand;
         cloth.Material = clothUpdt.Material;
         cloth.Season = clothUpdt.Season;
-        cloth.Type = clothUpdt.Type;   
-        cloth.Sex = clothUpdt.Sex;  
+        cloth.Type = clothUpdt.Type;
+        cloth.Sex = clothUpdt.Sex;
+
+        var clothCache = JsonSerializer.Serialize(cloth);
+        await _cache.SetStringAsync(cloth.Id.ToString(), clothCache, new DistributedCacheEntryOptions{
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2)
+        });
 
         await _context.SaveChangesAsync();
-    }
+    }*/
     
     public async Task DeleteCloth(Guid id){
-        var cloth = await _context.Clothes.FindAsync(id);
-        if(cloth == null){
-            throw new Exception("Продукт не найден.");
-        }
+        var cloth = await GetById(id);
 
+        await _cache.RemoveAsync(id.ToString());
         _context.Clothes.Remove(cloth);
         await _context.SaveChangesAsync();
     }

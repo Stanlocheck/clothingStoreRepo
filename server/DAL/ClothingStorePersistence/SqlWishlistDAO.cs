@@ -1,15 +1,19 @@
 using ClothesInterfacesDAL;
 using ClothDomain;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
+using System.Text.Json;
 
 namespace ClothingStorePersistence;
 
 public class SqlWishlistDAO : IWishlistDAO
 {
     private readonly ApplicationDbContext _context;
+    private readonly IDistributedCache _cache;
 
-    public SqlWishlistDAO(ApplicationDbContext context){
+    public SqlWishlistDAO(ApplicationDbContext context, IDistributedCache cache){
         _context = context;
+        _cache = cache;
     }
 
     public async Task<List<Wishlist>> GetAllWishlists(){
@@ -45,10 +49,22 @@ public class SqlWishlistDAO : IWishlistDAO
 
     public async Task<WishlistItem> GetWishlistItem(Guid buyerId, Guid wishlistItemId){
         var wishlist = await GetWishlist(buyerId);
+        WishlistItem? wishlistItem = null;
+        var wishlistItemCache = await _cache.GetStringAsync(wishlistItemId.ToString());
+        if(wishlistItemCache != null){
+            wishlistItem = JsonSerializer.Deserialize<WishlistItem>(wishlistItemCache);
+        }
 
-        var wishlistItem = wishlist.Items.FirstOrDefault(wi => wi.Id == wishlistItemId);
         if(wishlistItem == null){
-            throw new Exception("Продукт не найден.");
+            wishlistItem = wishlist.Items.FirstOrDefault(wi => wi.Id == wishlistItemId);
+            if(wishlistItem == null){
+                throw new Exception("Продукт не найден.");
+            }
+
+            wishlistItemCache = JsonSerializer.Serialize(wishlistItem);
+            await _cache.SetStringAsync(wishlistItem.Id.ToString(), wishlistItemCache, new DistributedCacheEntryOptions{
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2)
+            });
         }
 
         return wishlistItem;
@@ -57,7 +73,7 @@ public class SqlWishlistDAO : IWishlistDAO
     public async Task AddToWishlist(Guid buyerId, Guid clothId){
         var wishlist = await GetWishlist(buyerId);
 
-        var getById = new SqlDAO(_context);
+        var getById = new SqlDAO(_context, _cache);
         var cloth = await getById.GetById(clothId);
 
         var wishlistItem = wishlist.Items.FirstOrDefault(wi => wi.ClothId == clothId);
@@ -72,7 +88,7 @@ public class SqlWishlistDAO : IWishlistDAO
     public async Task FromWishlistToCart(Guid buyerId, Guid wishlistItemId){
         var wishlistItem = await GetWishlistItem(buyerId, wishlistItemId);
 
-        var addToCart = new SqlCartDAO(_context);
+        var addToCart = new SqlCartDAO(_context, _cache);
         await addToCart.AddToCart(buyerId, wishlistItem.ClothId);
 
         _context.WishlistItems.Remove(wishlistItem);
