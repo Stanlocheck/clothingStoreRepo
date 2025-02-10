@@ -65,20 +65,10 @@ public class ClothBusiness : IClothBLL
         }
     }
 
-    public async Task UpdateCloth(ClothAddDTO clothInfo, Guid id){
+    /*public async Task UpdateCloth(ClothAddDTO clothInfo, Guid id){
         try{
-            var cloth = new ClothAddDTO {
-                Price = clothInfo.Price,
-                Type = clothInfo.Type,
-                Brand = clothInfo.Brand,
-                Season = clothInfo.Season,
-                Size = clothInfo.Size,
-                Material = clothInfo.Material,
-                CountryOfOrigin = clothInfo.CountryOfOrigin,
-                Sex = clothInfo.Sex.ToUpper()
-            };
-            Enum.Parse<Gender>(cloth.Sex);
-            var clothUpdateDTO = _clothAddDTO.Map<ClothAddDTO, Cloth>(cloth);
+            Enum.Parse<Gender>(clothInfo.Sex);
+            var clothUpdateDTO = _clothAddDTO.Map<ClothAddDTO, Cloth>(clothInfo);
             await _clothDAO.UpdateCloth(clothUpdateDTO, id);
         }
         catch(ArgumentException){
@@ -87,7 +77,7 @@ public class ClothBusiness : IClothBLL
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
-    }
+    }*/
 
     public async Task DeleteCloth(Guid id){
         try{

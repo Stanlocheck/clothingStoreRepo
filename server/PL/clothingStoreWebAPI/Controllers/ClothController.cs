@@ -69,7 +69,7 @@ namespace clothingStoreWebAPI.Controllers
         }
 
 
-        /// <summary>
+        /*/// <summary>
         /// Изменяет информацию о продукте по его идентификатору.
         /// </summary>
         /// <param name="id">Идентификатор продукта.</param>
@@ -85,7 +85,7 @@ namespace clothingStoreWebAPI.Controllers
             catch(Exception ex){
                 return BadRequest(ex.Message);
             }
-        }
+        }*/
 
 
         /// <summary>
