@@ -120,5 +120,19 @@ namespace clothingStoreWebAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
+        
+        [HttpGet]
+        [Route("getCartItem")]
+        public async Task<ActionResult> GetCartItem(Guid cartItemId){
+            try{
+                var cloth = await _cartItemBLL.GetCartItem(cartItemId);
+                return RedirectToAction("GetById", "Cloth", new { id = cloth.ClothId});
+            }
+            catch(Exception ex){
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }
