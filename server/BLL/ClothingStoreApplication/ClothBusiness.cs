@@ -43,18 +43,9 @@ public class ClothBusiness : IClothBLL
 
     public async Task AddCloth(ClothAddDTO clothInfo){
         try{
-            var cloth = new ClothAddDTO {
-                Price = clothInfo.Price,
-                Type = clothInfo.Type,
-                Brand = clothInfo.Brand,
-                Season = clothInfo.Season,
-                Size = clothInfo.Size,
-                Material = clothInfo.Material,
-                CountryOfOrigin = clothInfo.CountryOfOrigin,
-                Sex = clothInfo.Sex.ToUpper()
-            };
-            Enum.Parse<Gender>(cloth.Sex);
-            var clothAddDTO = _clothAddDTO.Map<ClothAddDTO, Cloth>(cloth);                     
+            clothInfo.Sex = clothInfo.Sex.ToUpper();
+            Enum.Parse<Gender>(clothInfo.Sex);
+            var clothAddDTO = _clothAddDTO.Map<ClothAddDTO, Cloth>(clothInfo);                     
             await _clothDAO.AddCloth(clothAddDTO);
         }
         catch(ArgumentException){

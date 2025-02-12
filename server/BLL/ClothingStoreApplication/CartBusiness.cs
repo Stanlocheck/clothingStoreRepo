@@ -105,4 +105,15 @@ public class CartBusiness : ICartBLL
             throw new Exception(ex.Message);
         }
     }
+
+    public async Task<CartItemDTO> GetCartItem(Guid cartItemId){
+        try{
+            var buyerId = GetLoggedInBuyerId();
+            var cartItem = await _cartDAO.GetCartItem(buyerId, cartItemId);
+            return _cartDTO.Map<CartItem, CartItemDTO>(cartItem);
+        }
+        catch(Exception ex){
+            throw new Exception(ex.Message);
+        }
+    }
 }

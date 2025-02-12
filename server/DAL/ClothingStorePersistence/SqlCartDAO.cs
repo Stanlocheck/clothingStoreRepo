@@ -1,4 +1,3 @@
-using System.Text.Json;
 using ClothDomain;
 using ClothesInterfacesDAL;
 using Microsoft.EntityFrameworkCore;
@@ -39,22 +38,10 @@ public class SqlCartDAO : ICartDAO
 
     public async Task<CartItem> GetCartItem(Guid buyerId, Guid cartItemId){
         var cart = await GetCart(buyerId);
-        CartItem? cartItem = null;
-        var cartItemCache = await _cache.GetStringAsync(cartItemId.ToString());
-        if(cartItemCache != null){
-            cartItem = JsonSerializer.Deserialize<CartItem>(cartItemCache);
-        }
 
+        var cartItem = cart.Items.FirstOrDefault(ci => ci.Id == cartItemId);
         if(cartItem == null){
-            cartItem = cart.Items.FirstOrDefault(ci => ci.Id == cartItemId);
-            if(cartItem == null){
-                throw new Exception("Продукт не найден.");
-            }
-
-            cartItemCache = JsonSerializer.Serialize(cartItem);
-            await _cache.SetStringAsync(cartItem.Id.ToString(), cartItemCache, new DistributedCacheEntryOptions{
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2)
-            });
+            throw new Exception("Продукт не найден.");
         }
 
         return cartItem;
@@ -100,7 +87,6 @@ public class SqlCartDAO : ICartDAO
             cartItem.Cart.Amount++;
         }
 
-        await _cache.RefreshAsync(cartItemId.ToString());
         await _context.SaveChangesAsync();
     }
 
@@ -121,7 +107,6 @@ public class SqlCartDAO : ICartDAO
             _context.CartItems.Remove(cartItem);
         }
 
-        await _cache.RefreshAsync(cartItemId.ToString());
         await _context.SaveChangesAsync();
     }
 
@@ -132,8 +117,7 @@ public class SqlCartDAO : ICartDAO
             cartItem.Cart.Price-=cartItem.Price;
             cartItem.Cart.Amount-=cartItem.Amount;
         }
-
-        await _cache.RemoveAsync(cartItemId.ToString());
+        
         _context.CartItems.Remove(cartItem);
         await _context.SaveChangesAsync();
     }
