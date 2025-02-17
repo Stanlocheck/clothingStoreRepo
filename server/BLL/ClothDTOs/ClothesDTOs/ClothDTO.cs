@@ -1,3 +1,5 @@
+using ClothDTOs.ClothesDTOs;
+
 namespace ClothDTOs;
 
 public class ClothDTO
@@ -11,4 +13,5 @@ public class ClothDTO
     public string Material { get; set; }
     public string CountryOfOrigin { get; set; }
     public string Sex { get; set; }
+    public ICollection<ClothImageDTO> Images { get; set; } = new List<ClothImageDTO>();
 }

@@ -6,6 +6,7 @@ namespace ClothingStorePersistence;
 public class ApplicationDbContext : DbContext
 {
     public DbSet<Cloth> Clothes { get; set; } = null!;
+    public DbSet<ClothImage> ClothImages { get; set; } = null!;
     public DbSet<Buyer> Buyers { get; set; } = null!;
     public DbSet<Admin> Admins { get; set; } = null!;
     public DbSet<Cart> Carts { get; set; } = null!;
@@ -19,6 +20,12 @@ public class ApplicationDbContext : DbContext
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder){
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.Entity<ClothImage>()
+            .HasOne(c => c.Cloth)
+            .WithMany(c => c.Images)
+            .HasForeignKey(ci => ci.ClothId)
+            .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<Cart>()
             .HasOne(c => c.Buyer)

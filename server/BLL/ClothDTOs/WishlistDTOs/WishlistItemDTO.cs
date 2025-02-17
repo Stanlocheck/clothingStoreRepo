@@ -9,6 +9,8 @@ public class WishlistItemDTO
 
     [JsonIgnore]
     public ClothDTO Cloth { get; set; }
+
+    [JsonIgnore]
     public Guid WishlistId { get; set; }
     
     [JsonIgnore]

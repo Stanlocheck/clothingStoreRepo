@@ -3,6 +3,8 @@ using ClothDomain;
 using ClothDTOs;
 using ClothesInterfacesBLL;
 using ClothesInterfacesDAL;
+using Microsoft.AspNetCore.Http;
+using ClothDTOs.ClothesDTOs;
 
 namespace ClothingStoreApplication;
 
@@ -14,7 +16,11 @@ public class ClothBusiness : IClothBLL
     public ClothBusiness(IClothesDAO clothDAO){
         _clothDAO = clothDAO;
 
-        var _clothDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Cloth, ClothDTO>().ReverseMap());
+        var _clothDtoMapping = new MapperConfiguration(cfg => {
+            cfg.CreateMap<ClothImage, ClothImageDTO>();
+            cfg.CreateMap<Cloth, ClothDTO>()
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images));
+        });
         _clothDTO = new Mapper(_clothDtoMapping);
 
         var _clothAddDtoMapping = new MapperConfiguration(cfg => cfg.CreateMap<Cloth, ClothAddDTO>().ReverseMap());
@@ -41,12 +47,15 @@ public class ClothBusiness : IClothBLL
         }
     }
 
-    public async Task AddCloth(ClothAddDTO clothInfo){
+    public async Task AddCloth(ClothAddDTO clothInfo, IFormFile file){
         try{
+            using var memoryStream = new MemoryStream();
+            await file.CopyToAsync(memoryStream);
+
             clothInfo.Sex = clothInfo.Sex.ToUpper();
             Enum.Parse<Gender>(clothInfo.Sex);
             var clothAddDTO = _clothAddDTO.Map<ClothAddDTO, Cloth>(clothInfo);                     
-            await _clothDAO.AddCloth(clothAddDTO);
+            await _clothDAO.AddCloth(clothAddDTO, memoryStream.ToArray(), file.ContentType);
         }
         catch(ArgumentException){
             throw new Exception("Неверно указан пол.");
@@ -56,11 +65,11 @@ public class ClothBusiness : IClothBLL
         }
     }
 
-    /*public async Task UpdateCloth(ClothAddDTO clothInfo, Guid id){
+    public async Task UpdateCloth(ClothAddDTO clothInfo){
         try{
             Enum.Parse<Gender>(clothInfo.Sex);
             var clothUpdateDTO = _clothAddDTO.Map<ClothAddDTO, Cloth>(clothInfo);
-            await _clothDAO.UpdateCloth(clothUpdateDTO, id);
+            await _clothDAO.UpdateCloth(clothUpdateDTO);
         }
         catch(ArgumentException){
             throw new Exception("Неверно указан пол.");
@@ -68,7 +77,7 @@ public class ClothBusiness : IClothBLL
         catch(Exception ex){
             throw new Exception(ex.Message);
         }
-    }*/
+    }
 
     public async Task DeleteCloth(Guid id){
         try{

@@ -122,7 +122,11 @@ namespace clothingStoreWebAPI.Controllers
         }
 
 
-        
+        /// <summary>
+        /// Получает информацию о продукте в корзине.
+        /// </summary>
+        /// <param name="cartItemId">Идентификатор продукта в корзине.</param>
+        /// <returns>Информация о продукте.</returns>
         [HttpGet]
         [Route("getCartItem")]
         public async Task<ActionResult> GetCartItem(Guid cartItemId){

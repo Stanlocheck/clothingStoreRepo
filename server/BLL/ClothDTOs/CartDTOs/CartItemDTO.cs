@@ -10,6 +10,7 @@ public class CartItemDTO
     [JsonIgnore]
     public ClothDTO Cloth { get; set; }
     public int Amount { get; set; }
+    
     [JsonIgnore]
     public Guid CartId { get; set; }
 
