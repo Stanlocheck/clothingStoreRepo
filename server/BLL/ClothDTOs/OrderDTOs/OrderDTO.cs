@@ -6,8 +6,10 @@ namespace ClothDTOs.OrderDTOs;
 public class OrderDTO
 {
     public Guid Id { get; set; }
+
     [JsonIgnore]
     public Guid BuyerId { get; set; }
+    
     [JsonIgnore]
     public BuyerDTO Buyer { get; set; }
     public DateTime OrderDate { get; set; }

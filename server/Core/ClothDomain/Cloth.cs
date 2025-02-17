@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+using Microsoft.AspNetCore.Http;
 
 namespace ClothDomain;
 
@@ -14,4 +15,5 @@ public class Cloth
     public string CountryOfOrigin { get; set; }
     [Column(TypeName = "text")]
     public Gender Sex { get; set; }
+    public ICollection<ClothImage> Images { get; set; } = new List<ClothImage>();
 }

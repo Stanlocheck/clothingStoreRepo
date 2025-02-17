@@ -8,11 +8,9 @@ namespace ClothingStorePersistence;
 public class SqlOrderDAO : IOrderDAO
 {
     private readonly ApplicationDbContext _context;
-    private readonly IDistributedCache _cache;
 
-    public SqlOrderDAO(ApplicationDbContext context, IDistributedCache cache){
+    public SqlOrderDAO(ApplicationDbContext context){
         _context = context;
-        _cache = cache;
     }
 
     public async Task<List<Order>> GetAllOrders(Guid buyerId){
@@ -34,7 +32,7 @@ public class SqlOrderDAO : IOrderDAO
             throw new Exception("Корзина пустая.");
         }
 
-        var sqlCartDAO = new SqlCartDAO(_context, _cache);
+        var sqlCartDAO = new SqlCartDAO(_context);
         var selectedItems = await sqlCartDAO.GetAllSelectedItems(buyerId);
 
         var order = new Order { 

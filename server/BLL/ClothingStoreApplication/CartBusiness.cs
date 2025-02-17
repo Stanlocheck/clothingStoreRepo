@@ -5,6 +5,7 @@ using ClothDTOs;
 using ClothDomain;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
+using ClothDTOs.ClothesDTOs;
 
 namespace ClothingStoreApplication;
 
@@ -26,7 +27,8 @@ public class CartBusiness : ICartBLL
                 .ForMember(dest => dest.Buyer, opt => opt.MapFrom(src => src.Buyer))
                 .ForMember(dest => dest.Items, opt => opt.MapFrom(src => src.Items));
             cfg.CreateMap<Buyer, BuyerDTO>();
-            cfg.CreateMap<Cloth, ClothDTO>();
+            cfg.CreateMap<Cloth, ClothDTO>()
+                .ForMember(dest => dest.Images, opt => opt.MapFrom(src => src.Images));
         });
         _cartDTO = new Mapper(_cartDtoMapping);
     }

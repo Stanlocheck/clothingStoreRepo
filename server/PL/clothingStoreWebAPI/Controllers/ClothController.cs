@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using ClothesInterfacesBLL;
 using ClothDTOs;
 using Microsoft.AspNetCore.Authorization;
+using clothingStoreWebAPI.Models;
 
 namespace clothingStoreWebAPI.Controllers
 {
@@ -13,8 +14,10 @@ namespace clothingStoreWebAPI.Controllers
     public class ClothController : ControllerBase
     {
         private IClothBLL _clothBLL;
+        private ILogger<ClothController> _logger;
 
-        public ClothController(IClothBLL clothBLL) {
+        public ClothController(IClothBLL clothBLL, ILogger<ClothController> logger) {
+            _logger = logger;
             _clothBLL = clothBLL;
         }
 
@@ -58,34 +61,34 @@ namespace clothingStoreWebAPI.Controllers
         /// <returns>Информация о продукте.</returns>
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
-        public async Task<ActionResult> AddCloth(ClothAddDTO addCloth){
+        public async Task<ActionResult> AddCloth([FromForm] ClothAddDTO addCloth, [FromForm] UploadImageModel file){
             try{
-                await _clothBLL.AddCloth(addCloth);
+                await _clothBLL.AddCloth(addCloth, file.File);
                 return Ok(addCloth);
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка создании продукта");
                 return BadRequest(ex.Message);
             }
         }
 
 
-        /*/// <summary>
+        /// <summary>
         /// Изменяет информацию о продукте по его идентификатору.
         /// </summary>
-        /// <param name="id">Идентификатор продукта.</param>
         /// <param name="updtCloth">Схема продукта.</param>
         /// <returns>Информация о продукте.</returns>
         [Authorize(Policy = "AdminOnly")]
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateCloth(ClothAddDTO updtCloth, Guid id){
+        [HttpPut]
+        public async Task<ActionResult> UpdateCloth(ClothAddDTO updtCloth){
             try{
-                await _clothBLL.UpdateCloth(updtCloth, id);
+                await _clothBLL.UpdateCloth(updtCloth);
                 return Ok(updtCloth);
             }
             catch(Exception ex){
                 return BadRequest(ex.Message);
             }
-        }*/
+        }
 
 
         /// <summary>
@@ -138,5 +141,24 @@ namespace clothingStoreWebAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
+
+
+        /*[HttpPost]
+        [Route("image")]
+        public async Task<ActionResult> ImageUpload(IFormFile file){
+            if(file == null || file.Length == 0){
+                return Content("Файл не выбран или пуст.");
+            }
+
+            var fileName = file.FileName;
+            var fileSize = file.Length;
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "images", fileName);
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                file.CopyTo(stream);
+            }
+
+            return Content($"Файл {fileName} успешно загружен. Размер: {fileSize} байт.");
+        }*/
     }
 }

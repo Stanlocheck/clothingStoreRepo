@@ -9,74 +9,46 @@ namespace ClothingStorePersistence;
 public class SqlDAO : IClothesDAO
 {
     private readonly ApplicationDbContext _context;
-    private readonly IDistributedCache _cache;
 
-    public SqlDAO(ApplicationDbContext context, IDistributedCache cache){
+    public SqlDAO(ApplicationDbContext context){
         _context = context;
-        _cache = cache;
     }
     
     public async Task<List<Cloth>> GetAll(){
-        return await _context.Clothes.ToListAsync();
+        return await _context.Clothes.Include(c => c.Images).ToListAsync();
     }
 
     public async Task<Cloth> GetById(Guid id){
-        Cloth? cloth = null;
-        var clothCache = await _cache.GetStringAsync(id.ToString());
-        if(clothCache != null){
-            cloth = JsonSerializer.Deserialize<Cloth>(clothCache);
-        }
-
+        var cloth = await _context.Clothes.Include(c => c.Images).FirstOrDefaultAsync(_cloth => _cloth.Id == id);
         if(cloth == null){
-            cloth = await _context.Clothes.FirstOrDefaultAsync(_cloth => _cloth.Id == id);
-            if(cloth == null){
-                throw new Exception("Продукт не найден.");
-            }
-
-            clothCache = JsonSerializer.Serialize(cloth);
-            await _cache.SetStringAsync(cloth.Id.ToString(), clothCache, new DistributedCacheEntryOptions{
-                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2)
-            });
+            throw new Exception("Продукт не найден.");
         }
 
         return cloth;
     }
 
-    public async Task AddCloth(Cloth cloth){
+    public async Task AddCloth(Cloth cloth, byte[] imageData, string imageContentType){
         await _context.Clothes.AddAsync(cloth);
 
-        var clothCache = JsonSerializer.Serialize(cloth);
-        await _cache.SetStringAsync(cloth.Id.ToString(), clothCache, new DistributedCacheEntryOptions{
-            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2)
+        await _context.SaveChangesAsync();
+
+        cloth.Images.Add(new ClothImage{
+            Data = imageData,
+            ContentType = imageContentType,
+            ClothId = cloth.Id
         });
 
         await _context.SaveChangesAsync();
     }
 
-    /*public async Task UpdateCloth(Cloth clothUpdt, Guid id){
-        var cloth = await GetById(id);
-
-        cloth.Price = clothUpdt.Price;
-        cloth.Size = clothUpdt.Size;
-        cloth.CountryOfOrigin = clothUpdt.CountryOfOrigin;
-        cloth.Brand = clothUpdt.Brand;
-        cloth.Material = clothUpdt.Material;
-        cloth.Season = clothUpdt.Season;
-        cloth.Type = clothUpdt.Type;
-        cloth.Sex = clothUpdt.Sex;
-
-        var clothCache = JsonSerializer.Serialize(cloth);
-        await _cache.SetStringAsync(cloth.Id.ToString(), clothCache, new DistributedCacheEntryOptions{
-            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2)
-        });
-
+    public async Task UpdateCloth(Cloth clothUpdt){
+        _context.Clothes.Update(clothUpdt);
         await _context.SaveChangesAsync();
-    }*/
+    }
     
     public async Task DeleteCloth(Guid id){
         var cloth = await GetById(id);
 
-        await _cache.RemoveAsync(id.ToString());
         _context.Clothes.Remove(cloth);
         await _context.SaveChangesAsync();
     }
