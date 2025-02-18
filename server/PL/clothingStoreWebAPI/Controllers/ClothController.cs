@@ -73,13 +73,13 @@ namespace clothingStoreWebAPI.Controllers
         }
 
 
-        /// <summary>
+        /*/// <summary>
         /// Изменяет информацию о продукте по его идентификатору.
         /// </summary>
         /// <param name="updtCloth">Схема продукта.</param>
         /// <returns>Информация о продукте.</returns>
         [Authorize(Policy = "AdminOnly")]
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCloth(ClothAddDTO updtCloth){
             try{
                 await _clothBLL.UpdateCloth(updtCloth);
@@ -88,7 +88,7 @@ namespace clothingStoreWebAPI.Controllers
             catch(Exception ex){
                 return BadRequest(ex.Message);
             }
-        }
+        }*/
 
 
         /// <summary>
@@ -143,22 +143,17 @@ namespace clothingStoreWebAPI.Controllers
         }
 
 
-        /*[HttpPost]
-        [Route("image")]
-        public async Task<ActionResult> ImageUpload(IFormFile file){
-            if(file == null || file.Length == 0){
-                return Content("Файл не выбран или пуст.");
+        [HttpPost]
+        [Route("addImage")]
+        public async Task<ActionResult> AddImage(Guid clothId, [FromForm] UploadImageModel files){
+            try{
+                await _clothBLL.AddImage(clothId, files.Files);
+                return Ok();
             }
-
-            var fileName = file.FileName;
-            var fileSize = file.Length;
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "images", fileName);
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                file.CopyTo(stream);
+            catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка создании продукта");
+                return BadRequest(ex.Message);
             }
-
-            return Content($"Файл {fileName} успешно загружен. Размер: {fileSize} байт.");
-        }*/
+        }
     }
 }

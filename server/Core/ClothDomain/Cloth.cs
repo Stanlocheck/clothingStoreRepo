@@ -13,6 +13,7 @@ public class Cloth
     public int Size { get; set; }
     public string Material { get; set; }
     public string CountryOfOrigin { get; set; }
+    public int Count { get; set; }
     [Column(TypeName = "text")]
     public Gender Sex { get; set; }
     public ICollection<ClothImage> Images { get; set; } = new List<ClothImage>();

@@ -59,4 +59,18 @@ public class SqlDAO : IClothesDAO
     public async Task<List<Cloth>> GetWomensClothing(){
         return await _context.Clothes.Where(w => w.Sex == (Gender)1).ToListAsync();
     }
+
+    public async Task AddImage(Guid clothId, IEnumerable<(byte[] imageData, string imageContentType)> images){
+        var cloth = await GetById(clothId);
+
+        foreach(var (data, contentType) in images){
+                cloth.Images.Add(new ClothImage{
+                Data = data,
+                ContentType = contentType,
+                ClothId = clothId
+            });
+        }
+
+        await _context.SaveChangesAsync();
+    }
 }
