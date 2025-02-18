@@ -61,9 +61,9 @@ namespace clothingStoreWebAPI.Controllers
         /// <returns>Информация о продукте.</returns>
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
-        public async Task<ActionResult> AddCloth([FromForm] ClothAddDTO addCloth, [FromForm] UploadImageModel file){
+        public async Task<ActionResult> AddCloth([FromForm] ClothAddDTO addCloth, [FromForm] UploadImageModel files){
             try{
-                await _clothBLL.AddCloth(addCloth, file.File);
+                await _clothBLL.AddCloth(addCloth, files.Files);
                 return Ok(addCloth);
             }
             catch(Exception ex){

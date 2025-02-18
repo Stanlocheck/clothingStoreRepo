@@ -2,5 +2,5 @@ namespace clothingStoreWebAPI.Models;
 
 public class UploadImageModel
 {
-    public IFormFile File { get; set; }
+    public IEnumerable<IFormFile> Files { get; set; }
 }

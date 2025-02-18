@@ -6,7 +6,7 @@ public interface IClothesDAO
 {
     public Task<List<Cloth>> GetAll();
     public Task<Cloth> GetById(Guid id);
-    public Task AddCloth(Cloth cloth, byte[] imageData, string imageContentType);
+    public Task AddCloth(Cloth cloth, IEnumerable<(byte[] imageData, string imageContentType)> images);
     public Task UpdateCloth(Cloth clothUpdt);
     public Task DeleteCloth(Guid id);
     public Task<List<Cloth>> GetMensClothing();
