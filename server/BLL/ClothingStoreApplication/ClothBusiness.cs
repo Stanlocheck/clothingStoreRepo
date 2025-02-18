@@ -128,4 +128,13 @@ public class ClothBusiness : IClothBLL
             throw new Exception(ex.Message);
         }
     }
+
+    public async Task DeleteImage(Guid clothId, IEnumerable<Guid> files){
+        try{               
+            await _clothDAO.DeleteImage(clothId, files);
+        }
+        catch(Exception ex){
+            throw new Exception(ex.Message);
+        }
+    }
 }

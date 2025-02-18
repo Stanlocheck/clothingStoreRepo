@@ -73,4 +73,24 @@ public class SqlDAO : IClothesDAO
 
         await _context.SaveChangesAsync();
     }
+
+    public async Task DeleteImage(Guid clothId, IEnumerable<Guid> images){
+        var cloth = await GetById(clothId);
+
+        foreach(var imageId in images){
+            var image = await GetImage(imageId);
+            cloth.Images.Remove(image);
+        }
+
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<ClothImage> GetImage(Guid imageId){
+        var image = await _context.ClothImages.FirstOrDefaultAsync(_image => _image.Id == imageId);
+        if(image == null){
+            throw new Exception("Изображение не найдено.");
+        }
+
+        return image;
+    }
 }

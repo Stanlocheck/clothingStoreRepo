@@ -58,6 +58,8 @@ namespace clothingStoreWebAPI.Controllers
         /// <summary>
         /// Создает продукт.
         /// </summary>
+        /// <param name="addCloth">Информация о продукте.</param>
+        /// <param name="files">Загружаемые изображения.</param>
         /// <returns>Информация о продукте.</returns>
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
@@ -143,6 +145,12 @@ namespace clothingStoreWebAPI.Controllers
         }
 
 
+        /// <summary>
+        /// Добавляет изображения в существующий продукт.
+        /// </summary>
+        /// <param name="clothId">Идентификатор продукта.</param>
+        /// <param name="files">Загружаемые изображения.</param>
+        /// <returns>Информация о продукте.</returns>
         [HttpPost]
         [Route("addImage")]
         public async Task<ActionResult> AddImage(Guid clothId, [FromForm] UploadImageModel files){
@@ -151,7 +159,27 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok();
             }
             catch(Exception ex){
-                _logger.LogWarning(ex, "Ошибка создании продукта");
+                _logger.LogWarning(ex, "Ошибка добавления изображения");
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        /// <summary>
+        /// Удаляет изображения продукта по его идентификатору.
+        /// </summary>
+        /// <param name="clothId">Идентификатор продукта.</param>
+        /// <param name="files">Удаляемые изображения.</param>
+        /// <returns>Информация о продукте.</returns>
+        [HttpDelete]
+        [Route("deleteImage")]
+        public async Task<ActionResult> DeleteImage(Guid clothId, [FromForm] IEnumerable<Guid> files){
+            try{
+                await _clothBLL.DeleteImage(clothId, files);
+                return Ok();
+            }
+            catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка удаления изображения");
                 return BadRequest(ex.Message);
             }
         }

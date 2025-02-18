@@ -1,4 +1,5 @@
 using ClothDTOs;
+using ClothDTOs.ClothesDTOs;
 using Microsoft.AspNetCore.Http;
 
 namespace ClothesInterfacesBLL;
@@ -13,4 +14,5 @@ public interface IClothBLL
     public Task<List<ClothDTO>> GetMensClothing();
     public Task<List<ClothDTO>> GetWomensClothing();
     public Task AddImage(Guid clothId, IEnumerable<IFormFile> files);
+    public Task DeleteImage(Guid clothId, IEnumerable<Guid> files);
 }

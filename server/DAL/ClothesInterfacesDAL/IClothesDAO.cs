@@ -12,4 +12,6 @@ public interface IClothesDAO
     public Task<List<Cloth>> GetMensClothing();
     public Task<List<Cloth>> GetWomensClothing();
     public Task AddImage(Guid clothId, IEnumerable<(byte[] imageData, string imageContentType)> images);
+    public Task DeleteImage(Guid clothId, IEnumerable<Guid> images);
+    public Task<ClothImage> GetImage(Guid imageId);
 }
