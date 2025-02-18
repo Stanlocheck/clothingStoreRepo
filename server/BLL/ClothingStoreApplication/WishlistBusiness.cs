@@ -6,7 +6,6 @@ using ClothDTOs;
 using ClothDTOs.WishlistDTOs;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
-using ClothDTOs.ClothesDTOs;
 
 namespace ClothingStoreApplication;
 

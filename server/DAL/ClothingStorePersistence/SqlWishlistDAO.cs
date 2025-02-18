@@ -1,8 +1,6 @@
 using ClothesInterfacesDAL;
 using ClothDomain;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
-using System.Text.Json;
 
 namespace ClothingStorePersistence;
 

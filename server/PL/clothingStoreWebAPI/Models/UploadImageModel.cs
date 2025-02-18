@@ -1,5 +1,3 @@
-using System;
-
 namespace clothingStoreWebAPI.Models;
 
 public class UploadImageModel

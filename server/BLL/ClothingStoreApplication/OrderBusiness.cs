@@ -6,7 +6,6 @@ using ClothDomain;
 using ClothDTOs.OrderDTOs;
 using ClothDTOs;
 using System.Security.Claims;
-using ClothDTOs.ClothesDTOs;
 
 namespace ClothingStoreApplication;
 

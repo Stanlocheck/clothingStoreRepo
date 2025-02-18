@@ -1,6 +1,3 @@
-using System.Text.Json.Serialization;
-using ClothDTOs.ClothesDTOs;
-
 namespace ClothDTOs;
 
 public class ClothAddDTO

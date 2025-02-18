@@ -1,7 +1,5 @@
 using ClothesInterfacesBLL;
 using ClothesInterfacesDAL;
-using Microsoft.EntityFrameworkCore;
-using ClothingStorePersistence;
 using Microsoft.AspNetCore.Http;
 using AutoMapper;
 using ClothDomain;
