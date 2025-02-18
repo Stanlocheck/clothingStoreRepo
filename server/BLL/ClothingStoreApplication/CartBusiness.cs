@@ -5,7 +5,6 @@ using ClothDTOs;
 using ClothDomain;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
-using ClothDTOs.ClothesDTOs;
 
 namespace ClothingStoreApplication;
 

@@ -1,7 +1,6 @@
 using ClothDTOs.OrderDTOs;
 using ClothesInterfacesBLL;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace clothingStoreWebAPI.Controllers

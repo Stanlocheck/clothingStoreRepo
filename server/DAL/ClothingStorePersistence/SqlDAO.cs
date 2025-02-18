@@ -1,8 +1,6 @@
-using System.Text.Json;
 using ClothDomain;
 using ClothesInterfacesDAL;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
 
 namespace ClothingStorePersistence;
 
@@ -27,16 +25,17 @@ public class SqlDAO : IClothesDAO
         return cloth;
     }
 
-    public async Task AddCloth(Cloth cloth, byte[] imageData, string imageContentType){
+    public async Task AddCloth(Cloth cloth, IEnumerable<(byte[] imageData, string imageContentType)> images){
         await _context.Clothes.AddAsync(cloth);
-
         await _context.SaveChangesAsync();
 
-        cloth.Images.Add(new ClothImage{
-            Data = imageData,
-            ContentType = imageContentType,
-            ClothId = cloth.Id
-        });
+        foreach(var (data, contentType) in images){
+                cloth.Images.Add(new ClothImage{
+                Data = data,
+                ContentType = contentType,
+                ClothId = cloth.Id
+            });
+        }
 
         await _context.SaveChangesAsync();
     }

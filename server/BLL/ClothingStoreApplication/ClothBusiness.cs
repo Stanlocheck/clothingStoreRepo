@@ -47,15 +47,20 @@ public class ClothBusiness : IClothBLL
         }
     }
 
-    public async Task AddCloth(ClothAddDTO clothInfo, IFormFile file){
+    public async Task AddCloth(ClothAddDTO clothInfo, IEnumerable<IFormFile> files){
         try{
-            using var memoryStream = new MemoryStream();
-            await file.CopyToAsync(memoryStream);
-
             clothInfo.Sex = clothInfo.Sex.ToUpper();
             Enum.Parse<Gender>(clothInfo.Sex);
-            var clothAddDTO = _clothAddDTO.Map<ClothAddDTO, Cloth>(clothInfo);                     
-            await _clothDAO.AddCloth(clothAddDTO, memoryStream.ToArray(), file.ContentType);
+            var clothAddDTO = _clothAddDTO.Map<ClothAddDTO, Cloth>(clothInfo);
+
+            var images = new List<(byte[] imageData, string imageContentType)>();
+
+            foreach(var image in files){
+                using var memoryStream = new MemoryStream();
+                await image.CopyToAsync(memoryStream);
+                images.Add((memoryStream.ToArray(), image.ContentType));
+            }                  
+            await _clothDAO.AddCloth(clothAddDTO, images);
         }
         catch(ArgumentException){
             throw new Exception("Неверно указан пол.");
