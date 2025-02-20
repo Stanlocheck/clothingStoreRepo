@@ -1,15 +1,20 @@
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using ClothDomain;
 using ClothesInterfacesDAL;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace ClothingStorePersistence;
 
 public class SqlDAO : IClothesDAO
 {
     private readonly ApplicationDbContext _context;
+    private readonly IDistributedCache _cache;
 
-    public SqlDAO(ApplicationDbContext context){
+    public SqlDAO(ApplicationDbContext context, IDistributedCache cache){
         _context = context;
+        _cache = cache;
     }
     
     public async Task<List<Cloth>> GetAll(){
@@ -17,9 +22,26 @@ public class SqlDAO : IClothesDAO
     }
 
     public async Task<Cloth> GetById(Guid id){
-        var cloth = await _context.Clothes.Include(c => c.Images).FirstOrDefaultAsync(_cloth => _cloth.Id == id);
+        Cloth? cloth = null;
+        var clothString = await _cache.GetStringAsync(id.ToString());
+        if(clothString != null){
+            cloth = JsonSerializer.Deserialize<Cloth>(clothString);
+        }
+        
         if(cloth == null){
-            throw new Exception("Продукт не найден.");
+            cloth = await _context.Clothes.Include(c => c.Images).FirstOrDefaultAsync(_cloth => _cloth.Id == id);
+            if(cloth == null){
+                throw new Exception("Продукт не найден.");
+            }
+            var optionsCache = new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.Preserve,
+                WriteIndented = true
+            };
+            clothString = JsonSerializer.Serialize(cloth, optionsCache);
+            await _cache.SetStringAsync(cloth.Id.ToString(), clothString, new DistributedCacheEntryOptions{
+                AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2)
+            });
         }
 
         return cloth;
@@ -38,6 +60,16 @@ public class SqlDAO : IClothesDAO
         }
 
         await _context.SaveChangesAsync();
+
+        var optionsCache = new JsonSerializerOptions
+        {
+            ReferenceHandler = ReferenceHandler.Preserve,
+            WriteIndented = true
+        };
+        var clothCache = JsonSerializer.Serialize(cloth, optionsCache);
+        await _cache.SetStringAsync(cloth.Id.ToString(), clothCache, new DistributedCacheEntryOptions{
+            AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(2)
+        });
     }
 
     public async Task UpdateCloth(Cloth clothUpdt){
@@ -47,7 +79,9 @@ public class SqlDAO : IClothesDAO
     
     public async Task DeleteCloth(Guid id){
         var cloth = await GetById(id);
+        var clothString = JsonSerializer.Serialize(cloth);
 
+        _cache.Remove(clothString);
         _context.Clothes.Remove(cloth);
         await _context.SaveChangesAsync();
     }

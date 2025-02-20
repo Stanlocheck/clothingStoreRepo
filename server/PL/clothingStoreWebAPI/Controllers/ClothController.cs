@@ -33,6 +33,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok(cloth);
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка получении информации о продуктах");
                 return BadRequest(ex.Message);
             }
         }
@@ -50,6 +51,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok(cloth);
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка получении информации о продукте");
                 return BadRequest(ex.Message);
             }
         }
@@ -106,6 +108,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok();
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка удаления продукта");
                 return BadRequest(ex.Message);
             }
         }
@@ -123,6 +126,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok(cloth);
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка получения информации о женских продуктах");
                 return BadRequest(ex.Message);
             }
         }
@@ -140,6 +144,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok(cloth);
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка получения информации о женских продуктах");
                 return BadRequest(ex.Message);
             }
         }

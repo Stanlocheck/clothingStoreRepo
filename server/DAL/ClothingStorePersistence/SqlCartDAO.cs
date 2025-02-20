@@ -1,15 +1,18 @@
 using ClothDomain;
 using ClothesInterfacesDAL;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace ClothingStorePersistence;
 
 public class SqlCartDAO : ICartDAO
 {
     private readonly ApplicationDbContext _context;
+    private readonly IDistributedCache _cache;
 
-    public SqlCartDAO(ApplicationDbContext context){
+    public SqlCartDAO(ApplicationDbContext context, IDistributedCache cache){
         _context = context;
+        _cache = cache;
     }
 
     public async Task<List<Cart>> GetAllCarts(){
@@ -47,7 +50,7 @@ public class SqlCartDAO : ICartDAO
     public async Task AddToCart(Guid buyerId, Guid clothId){
         var cart = await GetCart(buyerId);
 
-        var getById = new SqlDAO(_context);
+        var getById = new SqlDAO(_context, _cache);
         var cloth = await getById.GetById(clothId);
 
         var cartItem = cart.Items.FirstOrDefault(ci => ci.ClothId == clothId);
@@ -74,7 +77,7 @@ public class SqlCartDAO : ICartDAO
     public async Task AddAmountOfCartItem(Guid buyerId, Guid cartItemId){
         var cartItem = await GetCartItem(buyerId, cartItemId);
 
-        var getById = new SqlDAO(_context);
+        var getById = new SqlDAO(_context, _cache);
         var cloth = await getById.GetById(cartItem.ClothId);
 
         cartItem.Amount++;
@@ -90,7 +93,7 @@ public class SqlCartDAO : ICartDAO
     public async Task ReduceAmountOfCartItem(Guid buyerId, Guid cartItemId){
         var cartItem = await GetCartItem(buyerId, cartItemId);
 
-        var getById = new SqlDAO(_context);
+        var getById = new SqlDAO(_context, _cache);
         var cloth = await getById.GetById(cartItem.ClothId);
 
         cartItem.Amount--;

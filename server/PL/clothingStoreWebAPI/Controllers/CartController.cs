@@ -14,8 +14,10 @@ namespace clothingStoreWebAPI.Controllers
     public class CartController : ControllerBase
     {
         private ICartBLL _cartItemBLL;
+        private ILogger<CartController> _logger;
 
-        public CartController(ICartBLL cartItemBLL){
+        public CartController(ICartBLL cartItemBLL, ILogger<CartController> logger){
+            _logger = logger;
             _cartItemBLL = cartItemBLL;
         }
 
@@ -31,6 +33,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok(cart);
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка получения информации о продуктах");
                 return BadRequest(ex.Message);
             }
         }
@@ -48,6 +51,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok();
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка добавления продукта");
                 return BadRequest(ex.Message);
             }
         }
@@ -66,6 +70,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok();
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка изменения количества");
                 return BadRequest(ex.Message);
             }
         }
@@ -84,6 +89,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok(); 
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка изменения количества");
                 return BadRequest(ex.Message);
             }
         }
@@ -100,6 +106,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok(); 
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка удаления продукта");
                 return BadRequest(ex.Message);
             }
         }
@@ -117,6 +124,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok();
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка изменения статуса продукта");
                 return BadRequest(ex.Message);
             }
         }
@@ -135,6 +143,7 @@ namespace clothingStoreWebAPI.Controllers
                 return RedirectToAction("GetById", "Cloth", new { id = cloth.ClothId});
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка получения информации о продукте");
                 return BadRequest(ex.Message);
             }
         }

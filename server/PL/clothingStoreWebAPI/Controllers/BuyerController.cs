@@ -13,8 +13,10 @@ namespace clothingStoreWebAPI.Controllers
     public class BuyerController : ControllerBase
     {
         private IBuyersBLL _buyerBLL;
+        private ILogger<AdminController> _logger;
 
-        public BuyerController(IBuyersBLL buyersBLL){
+        public BuyerController(IBuyersBLL buyersBLL, ILogger<AdminController> logger){
+            _logger = logger;
             _buyerBLL = buyersBLL;
         }
 
@@ -31,6 +33,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok(buyer);
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка получения информации о пользователях");
                 return BadRequest(ex.Message);
             }
         }
@@ -49,6 +52,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok(buyer);
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка получения информации о пользователе");
                 return BadRequest(ex.Message);
             }
         }
@@ -67,6 +71,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok(updtBuyer);
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка изменения информации");
                 return BadRequest(ex.Message);
             }
         }
