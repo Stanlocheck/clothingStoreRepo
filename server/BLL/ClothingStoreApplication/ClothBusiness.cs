@@ -112,4 +112,29 @@ public class ClothBusiness : IClothBLL
             throw new Exception(ex.Message);
         }
     }
+
+    public async Task AddImage(Guid clothId, IEnumerable<IFormFile> files){
+        try{
+            var images = new List<(byte[] imageData, string imageContentType)>();
+
+            foreach(var image in files){
+                using var memoryStream = new MemoryStream();
+                await image.CopyToAsync(memoryStream);
+                images.Add((memoryStream.ToArray(), image.ContentType));
+            }                  
+            await _clothDAO.AddImage(clothId, images);
+        }
+        catch(Exception ex){
+            throw new Exception(ex.Message);
+        }
+    }
+
+    public async Task DeleteImage(Guid clothId, IEnumerable<Guid> files){
+        try{               
+            await _clothDAO.DeleteImage(clothId, files);
+        }
+        catch(Exception ex){
+            throw new Exception(ex.Message);
+        }
+    }
 }

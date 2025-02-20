@@ -10,4 +10,5 @@ public class ClothAddDTO
     public string Material { get; set; }
     public string CountryOfOrigin { get; set; }
     public string Sex { get; set; }
+    public int Count { get; set; }
 }

@@ -33,6 +33,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok(cloth);
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка получении информации о продуктах");
                 return BadRequest(ex.Message);
             }
         }
@@ -50,6 +51,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok(cloth);
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка получении информации о продукте");
                 return BadRequest(ex.Message);
             }
         }
@@ -58,6 +60,8 @@ namespace clothingStoreWebAPI.Controllers
         /// <summary>
         /// Создает продукт.
         /// </summary>
+        /// <param name="addCloth">Информация о продукте.</param>
+        /// <param name="files">Загружаемые изображения.</param>
         /// <returns>Информация о продукте.</returns>
         [Authorize(Policy = "AdminOnly")]
         [HttpPost]
@@ -73,13 +77,13 @@ namespace clothingStoreWebAPI.Controllers
         }
 
 
-        /// <summary>
+        /*/// <summary>
         /// Изменяет информацию о продукте по его идентификатору.
         /// </summary>
         /// <param name="updtCloth">Схема продукта.</param>
         /// <returns>Информация о продукте.</returns>
         [Authorize(Policy = "AdminOnly")]
-        [HttpPut]
+        [HttpPut("{id}")]
         public async Task<ActionResult> UpdateCloth(ClothAddDTO updtCloth){
             try{
                 await _clothBLL.UpdateCloth(updtCloth);
@@ -88,7 +92,7 @@ namespace clothingStoreWebAPI.Controllers
             catch(Exception ex){
                 return BadRequest(ex.Message);
             }
-        }
+        }*/
 
 
         /// <summary>
@@ -104,6 +108,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok();
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка удаления продукта");
                 return BadRequest(ex.Message);
             }
         }
@@ -121,6 +126,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok(cloth);
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка получения информации о женских продуктах");
                 return BadRequest(ex.Message);
             }
         }
@@ -138,27 +144,49 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok(cloth);
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка получения информации о женских продуктах");
                 return BadRequest(ex.Message);
             }
         }
 
 
-        /*[HttpPost]
-        [Route("image")]
-        public async Task<ActionResult> ImageUpload(IFormFile file){
-            if(file == null || file.Length == 0){
-                return Content("Файл не выбран или пуст.");
+        /// <summary>
+        /// Добавляет изображения в существующий продукт.
+        /// </summary>
+        /// <param name="clothId">Идентификатор продукта.</param>
+        /// <param name="files">Загружаемые изображения.</param>
+        /// <returns>Информация о продукте.</returns>
+        [HttpPost]
+        [Route("addImage")]
+        public async Task<ActionResult> AddImage(Guid clothId, [FromForm] UploadImageModel files){
+            try{
+                await _clothBLL.AddImage(clothId, files.Files);
+                return Ok();
             }
-
-            var fileName = file.FileName;
-            var fileSize = file.Length;
-            var filePath = Path.Combine(Directory.GetCurrentDirectory(), "images", fileName);
-            using (var stream = new FileStream(filePath, FileMode.Create))
-            {
-                file.CopyTo(stream);
+            catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка добавления изображения");
+                return BadRequest(ex.Message);
             }
+        }
 
-            return Content($"Файл {fileName} успешно загружен. Размер: {fileSize} байт.");
-        }*/
+
+        /// <summary>
+        /// Удаляет изображения продукта по его идентификатору.
+        /// </summary>
+        /// <param name="clothId">Идентификатор продукта.</param>
+        /// <param name="files">Удаляемые изображения.</param>
+        /// <returns>Информация о продукте.</returns>
+        [HttpDelete]
+        [Route("deleteImage")]
+        public async Task<ActionResult> DeleteImage(Guid clothId, [FromForm] IEnumerable<Guid> files){
+            try{
+                await _clothBLL.DeleteImage(clothId, files);
+                return Ok();
+            }
+            catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка удаления изображения");
+                return BadRequest(ex.Message);
+            }
+        }
     }
 }

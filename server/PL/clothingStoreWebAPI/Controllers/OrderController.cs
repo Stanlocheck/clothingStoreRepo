@@ -13,8 +13,10 @@ namespace clothingStoreWebAPI.Controllers
     public class OrderController : ControllerBase
     {
         private IOrderBLL _orderBLL;
+        private ILogger<ClothController> _logger;
 
-        public OrderController(IOrderBLL orderBLL){
+        public OrderController(IOrderBLL orderBLL, ILogger<ClothController> logger){
+            _logger = logger;
             _orderBLL = orderBLL;
         }
 
@@ -31,6 +33,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok(order);
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка получения информации о заказах");
                 return BadRequest(ex.Message);
             }
         }
@@ -49,6 +52,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok(order);
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка получения информации о заказе");
                 return BadRequest(ex.Message);
             }
         }
@@ -66,6 +70,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok();
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка создания заказа");
                 return BadRequest(ex.Message);
             }
         }
@@ -85,6 +90,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok();
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка изменения статуса заказа");
                 return BadRequest(ex.Message);
             }
         }

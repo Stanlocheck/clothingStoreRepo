@@ -14,8 +14,10 @@ namespace clothingStoreWebAPI.Controllers
     public class WishlistController : ControllerBase
     {
         private IWishlistBLL _wishlistItemBLL;
+        private ILogger<ClothController> _logger;
 
-        public WishlistController(IWishlistBLL wishlistItemBLL){
+        public WishlistController(IWishlistBLL wishlistItemBLL, ILogger<ClothController> logger){
+            _logger = logger;
             _wishlistItemBLL = wishlistItemBLL;
         }
 
@@ -31,6 +33,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok(wishlist);
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка получении информации о продуктах");
                 return BadRequest(ex.Message);
             }
         }
@@ -48,6 +51,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok();
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка добавления продукта");
                 return BadRequest(ex.Message);
             }
         }
@@ -66,6 +70,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok();
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка добавления продукта");
                 return BadRequest(ex.Message);
             }
         }
@@ -83,6 +88,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok(); 
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка удаления продукта");
                 return BadRequest(ex.Message);
             }
         }

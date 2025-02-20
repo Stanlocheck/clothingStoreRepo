@@ -14,8 +14,10 @@ namespace clothingStoreWebAPI.Controllers
     public class AdminController : ControllerBase
     {
         private IAdminsBLL _adminBLL;
+        private ILogger<AdminController> _logger;
 
-        public AdminController(IAdminsBLL adminsBLL){
+        public AdminController(IAdminsBLL adminsBLL, ILogger<AdminController> logger){
+            _logger = logger;
             _adminBLL = adminsBLL;
         }
         
@@ -32,6 +34,7 @@ namespace clothingStoreWebAPI.Controllers
                 return Ok(updtAdmin);
             }
             catch(Exception ex){
+                _logger.LogWarning(ex, "Ошибка изменения информации");
                 return BadRequest(ex.Message);
             }
         }
