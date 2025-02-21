@@ -25,7 +25,12 @@ public class SqlDAO : IClothesDAO
         Cloth? cloth = null;
         var clothString = await _cache.GetStringAsync(id.ToString());
         if(clothString != null){
-            cloth = JsonSerializer.Deserialize<Cloth>(clothString);
+            var optionsCache = new JsonSerializerOptions
+            {
+                ReferenceHandler = ReferenceHandler.Preserve,
+                WriteIndented = true
+            };
+            cloth = JsonSerializer.Deserialize<Cloth>(clothString, optionsCache);
         }
         
         if(cloth == null){
@@ -79,7 +84,12 @@ public class SqlDAO : IClothesDAO
     
     public async Task DeleteCloth(Guid id){
         var cloth = await GetById(id);
-        var clothString = JsonSerializer.Serialize(cloth);
+        var optionsCache = new JsonSerializerOptions
+        {
+            ReferenceHandler = ReferenceHandler.Preserve,
+            WriteIndented = true
+        };
+        var clothString = JsonSerializer.Serialize(cloth, optionsCache);
 
         _cache.Remove(clothString);
         _context.Clothes.Remove(cloth);

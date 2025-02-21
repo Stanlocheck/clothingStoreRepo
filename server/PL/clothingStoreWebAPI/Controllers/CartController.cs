@@ -30,6 +30,7 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult<CartDTO>> GetCart(){
             try{
                 var cart = await _cartItemBLL.GetCart();
+                _logger.LogInformation("Успешное получение информации о продуктах");
                 return Ok(cart);
             }
             catch(Exception ex){
@@ -48,6 +49,7 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult> AddToCart(Guid clothId){
             try{
                 await _cartItemBLL.AddToCart(clothId);
+                _logger.LogInformation("Успешное добавление продукта");
                 return Ok();
             }
             catch(Exception ex){
@@ -67,10 +69,11 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult> AddAmountOfCartItem(Guid cartItemId){
             try{
                 await _cartItemBLL.AddAmountOfCartItem(cartItemId);
+                _logger.LogInformation("Успешное изменение количества продукта");
                 return Ok();
             }
             catch(Exception ex){
-                _logger.LogWarning(ex, "Ошибка изменения количества");
+                _logger.LogWarning(ex, "Ошибка изменения количества продукта");
                 return BadRequest(ex.Message);
             }
         }
@@ -86,10 +89,11 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult> ReduceAmountOfCartItem(Guid cartItemId){
             try{
                 await _cartItemBLL.ReduceAmountOfCartItem(cartItemId);
+                _logger.LogInformation("Успешное изменение количества продукта");
                 return Ok(); 
             }
             catch(Exception ex){
-                _logger.LogWarning(ex, "Ошибка изменения количества");
+                _logger.LogWarning(ex, "Ошибка изменения количества продукта");
                 return BadRequest(ex.Message);
             }
         }
@@ -103,6 +107,7 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult> DeleteCartItem(Guid cartItemId){
             try{
                 await _cartItemBLL.DeleteCartItem(cartItemId);
+                _logger.LogInformation("Успешное удаление продукта");
                 return Ok(); 
             }
             catch(Exception ex){
@@ -121,6 +126,7 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult> SelectCartItem(Guid cartItemId){
             try{
                 await _cartItemBLL.SelectCartItem(cartItemId);
+                _logger.LogInformation("Успешное изменение статуса продукта");
                 return Ok();
             }
             catch(Exception ex){

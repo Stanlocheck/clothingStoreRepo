@@ -30,10 +30,11 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult<List<WishlistItemDTO>>> GetAllWishlistItems(){
             try{
                 var wishlist = await _wishlistItemBLL.GetAllWishlistItems();
+                _logger.LogInformation("Успешное получение информации о продуктах");
                 return Ok(wishlist);
             }
             catch(Exception ex){
-                _logger.LogWarning(ex, "Ошибка получении информации о продуктах");
+                _logger.LogWarning(ex, "Ошибка получения информации о продуктах");
                 return BadRequest(ex.Message);
             }
         }
@@ -48,6 +49,7 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult> AddToWishlist(Guid clothId){
             try{
                 await _wishlistItemBLL.AddToWishlist(clothId);
+                _logger.LogInformation("Успешное добавление продукта");
                 return Ok();
             }
             catch(Exception ex){
@@ -67,6 +69,7 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult> FromWishlistToCart(Guid wishlistItemId){
             try{
                 await _wishlistItemBLL.FromWishlistToCart(wishlistItemId);
+                _logger.LogInformation("Успешное добавление продукта");
                 return Ok();
             }
             catch(Exception ex){
@@ -85,6 +88,7 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult> DeleteWishlistItem(Guid wishlistItemId){
             try{
                 await _wishlistItemBLL.DeleteWishlistItem(wishlistItemId);
+                _logger.LogInformation("Успешное удаление продукта");
                 return Ok(); 
             }
             catch(Exception ex){

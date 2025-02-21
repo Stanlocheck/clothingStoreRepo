@@ -30,6 +30,7 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult<List<OrderDTO>>> GetAllOrders(){
             try{
                 var order = await _orderBLL.GetAllOrders();
+                _logger.LogInformation("Успешное получение информации о заказах");
                 return Ok(order);
             }
             catch(Exception ex){
@@ -49,6 +50,7 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult<OrderDTO>> GetOrder(Guid orderId){
             try{
                 var order = await _orderBLL.GetOrder(orderId);
+                _logger.LogInformation("Успешное получение информации о заказе");
                 return Ok(order);
             }
             catch(Exception ex){
@@ -67,6 +69,7 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult> CreateOrder(){
             try{
                 await _orderBLL.CreateOrder();
+                _logger.LogInformation("Успешное создание заказа");
                 return Ok();
             }
             catch(Exception ex){
@@ -87,6 +90,7 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult> SelectOrderStatus(Guid orderId, string status){
             try{
                 await _orderBLL.SelectOrderStatus(orderId, status);
+                _logger.LogInformation("Успешное изменение статуса заказа");
                 return Ok();
             }
             catch(Exception ex){

@@ -31,6 +31,7 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult> UpdateAdmin(AdminUpdateDTO updtAdmin){
             try{
                 await _adminBLL.UpdateAdmin(updtAdmin);
+                _logger.LogInformation("Успешное изменение информации");
                 return Ok(updtAdmin);
             }
             catch(Exception ex){
