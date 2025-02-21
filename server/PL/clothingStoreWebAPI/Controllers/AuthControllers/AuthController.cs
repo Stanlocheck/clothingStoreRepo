@@ -12,8 +12,10 @@ namespace clothingStoreWebAPI.Controllers
     public class AuthController : ControllerBase
     {
         private readonly IAuthService _authService;
+        private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IAuthService authService){
+        public AuthController(IAuthService authService, ILogger<AuthController> logger){
+            _logger = logger;
             _authService = authService;
         }
 
@@ -26,13 +28,13 @@ namespace clothingStoreWebAPI.Controllers
         [HttpPost("register")]
         public async Task<ActionResult> Register(BuyerAddDTO buyer)
         {
-            try
-            {
+            try{
                 await _authService.Register(buyer);
+                _logger.LogInformation("Успешная регистрация пользователя");
                 return Ok("Регистрация пользователя успешна.");
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex){
+                _logger.LogWarning(ex, "Ошибка регистрации пользователя");
                 return BadRequest(ex.Message);
             }
         }
@@ -46,13 +48,13 @@ namespace clothingStoreWebAPI.Controllers
         [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] LoginModel request)
         {
-            try
-            {
+            try{
                 await _authService.Login(request.Email, request.Password);
+                _logger.LogInformation("Успешный вход пользователя");
                 return Ok("Вход пользователя успешен.");
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex){
+                _logger.LogWarning(ex, "Ошибка входа пользователя");
                 return BadRequest(ex.Message);
             }
         }
@@ -65,13 +67,13 @@ namespace clothingStoreWebAPI.Controllers
         [HttpPost("logout")]
         public async Task<ActionResult> Logout()
         {
-            try
-            {
+            try{
                 await _authService.Logout();
+                _logger.LogInformation("Успешный выход пользователя");
                 return Ok("Выход пользователя успешен.");
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex){
+                _logger.LogWarning(ex, "Ошибка выхода пользователя");
                 return BadRequest(ex.Message);
             }
         }

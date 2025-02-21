@@ -26,13 +26,11 @@ namespace clothingStoreWebAPI.Controllers
         [HttpPost("registerAdmin")]
         public async Task<ActionResult> Register(AdminAddDTO admin)
         {
-            try
-            {
+            try{
                 await _authAdminService.Register(admin);
                 return Ok("Регистрация пользователя успешна.");
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex){
                 return BadRequest(ex.Message);
             }
         }
@@ -46,13 +44,11 @@ namespace clothingStoreWebAPI.Controllers
         [HttpPost("loginAdmin")]
         public async Task<ActionResult> Login([FromBody] LoginModel request)
         {
-            try
-            {
+            try{
                 await _authAdminService.Login(request.Email, request.Password);
                 return Ok("Вход пользователя успешен.");
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex){
                 return BadRequest(ex.Message);
             }
         }
@@ -65,13 +61,11 @@ namespace clothingStoreWebAPI.Controllers
         [HttpPost("logoutAdmin")]
         public async Task<ActionResult> Logout()
         {
-            try
-            {
+            try{
                 await _authAdminService.Logout();
                 return Ok("Выход пользователя успешен.");
             }
-            catch (Exception ex)
-            {
+            catch (Exception ex){
                 return BadRequest(ex.Message);
             }
         }
