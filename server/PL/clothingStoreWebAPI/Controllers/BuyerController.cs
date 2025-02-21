@@ -30,6 +30,7 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult<List<BuyerDTO>>> GetAll(){
             try{
                 var buyer = await _buyerBLL.GetAll();
+                _logger.LogInformation("Успешное получение информации о пользователях");
                 return Ok(buyer);
             }
             catch(Exception ex){
@@ -49,6 +50,7 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult<BuyerDTO>> GetById(Guid id){
             try{
                 var buyer = await _buyerBLL.GetById(id);
+                _logger.LogInformation("Успешное получение информации о пользователе");
                 return Ok(buyer);
             }
             catch(Exception ex){
@@ -68,6 +70,7 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult> UpdateBuyer(BuyerUpdateDTO updtBuyer){
             try{
                 await _buyerBLL.UpdateBuyer(updtBuyer);
+                _logger.LogInformation("Успешное изменение информации");
                 return Ok(updtBuyer);
             }
             catch(Exception ex){

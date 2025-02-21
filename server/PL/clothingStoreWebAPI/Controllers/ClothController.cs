@@ -30,6 +30,7 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult<List<ClothDTO>>> GetAll(){
             try{
                 var cloth = await _clothBLL.GetAll();
+                _logger.LogInformation("Успешное получение информации о продуктах");
                 return Ok(cloth);
             }
             catch(Exception ex){
@@ -48,6 +49,7 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult<ClothDTO>> GetById(Guid id){
             try{
                 var cloth = await _clothBLL.GetById(id);
+                _logger.LogInformation("Успешное получение информации о продукте");
                 return Ok(cloth);
             }
             catch(Exception ex){
@@ -68,10 +70,11 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult> AddCloth([FromForm] ClothAddDTO addCloth, [FromForm] UploadImageModel files){
             try{
                 await _clothBLL.AddCloth(addCloth, files.Files);
+                _logger.LogInformation("Успешное создание продукта");
                 return Ok(addCloth);
             }
             catch(Exception ex){
-                _logger.LogWarning(ex, "Ошибка создании продукта");
+                _logger.LogWarning(ex, "Ошибка создания продукта");
                 return BadRequest(ex.Message);
             }
         }
@@ -105,6 +108,7 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult> DeleteCloth(Guid id){
             try{
                 await _clothBLL.DeleteCloth(id);
+                _logger.LogInformation("Успешное удаление продукта");
                 return Ok();
             }
             catch(Exception ex){
@@ -123,10 +127,11 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult<List<ClothDTO>>> GetMensClothing(){
             try{
                 var cloth = await _clothBLL.GetMensClothing();
+                _logger.LogInformation("Успешное получение информации о мужских продуктах");
                 return Ok(cloth);
             }
             catch(Exception ex){
-                _logger.LogWarning(ex, "Ошибка получения информации о женских продуктах");
+                _logger.LogWarning(ex, "Ошибка получения информации о мужских продуктах");
                 return BadRequest(ex.Message);
             }
         }
@@ -141,6 +146,7 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult<List<ClothDTO>>> GetWomensClothing(){
             try{
                 var cloth = await _clothBLL.GetWomensClothing();
+                _logger.LogInformation("Успешное получение информации о женских продуктах");
                 return Ok(cloth);
             }
             catch(Exception ex){
@@ -161,10 +167,11 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult> AddImage(Guid clothId, [FromForm] UploadImageModel files){
             try{
                 await _clothBLL.AddImage(clothId, files.Files);
+                _logger.LogInformation("Успешное добавление изображений");
                 return Ok();
             }
             catch(Exception ex){
-                _logger.LogWarning(ex, "Ошибка добавления изображения");
+                _logger.LogWarning(ex, "Ошибка добавления изображений");
                 return BadRequest(ex.Message);
             }
         }
@@ -181,10 +188,11 @@ namespace clothingStoreWebAPI.Controllers
         public async Task<ActionResult> DeleteImage(Guid clothId, [FromForm] IEnumerable<Guid> files){
             try{
                 await _clothBLL.DeleteImage(clothId, files);
+                _logger.LogInformation("Успешное удаление изображений");
                 return Ok();
             }
             catch(Exception ex){
-                _logger.LogWarning(ex, "Ошибка удаления изображения");
+                _logger.LogWarning(ex, "Ошибка удаления изображений");
                 return BadRequest(ex.Message);
             }
         }
